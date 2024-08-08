@@ -3,49 +3,55 @@
 import { useState } from "react";
 import { AiOutlineClose } from "react-icons/ai";
 
-const AddProduct = () => {
-  const [productName, setProductName] = useState("");
-  const [sellerInfo, setSellerInfo] = useState("");
-  const [stockCount, setStockCount] = useState("");
-  const [price, setPrice] = useState("");
-  const [discountedPrice, setDiscountedPrice] = useState("");
-  const [category, setCategory] = useState("");
-  const [productImages, setProductImages] = useState<File[]>([]);
-  const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({});
+interface FormErrors {
+  productName?: string;
+  sellerInfo?: string;
+  stockCount?: string;
+  price?: string;
+  discountedPrice?: string;
+  category?: string;
+}
 
-  // Handle file input change
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files) {
-      setProductImages((prevImages) => [
-        ...prevImages,
-        ...Array.from(files),
-      ]);
+const AddProduct = () => {
+  const [productName, setProductName] = useState<string>("");
+  const [sellerInfo, setSellerInfo] = useState<string>("");
+  const [stockCount, setStockCount] = useState<number | undefined>(undefined);
+  const [price, setPrice] = useState<number | undefined>(undefined);
+  const [discountedPrice, setDiscountedPrice] = useState<number | undefined>(undefined);
+  const [category, setCategory] = useState<string>("");
+  const [productImageUrls, setProductImageUrls] = useState<string[]>([]);
+  const [imageUrl, setImageUrl] = useState<string>("");
+  const [formErrors, setFormErrors] = useState<FormErrors>({});
+
+  const handleAddImageUrl = () => {
+    if (imageUrl) {
+      setProductImageUrls((prevUrls) => [...prevUrls, imageUrl]);
+      setImageUrl("");
     }
   };
 
   const handleRemoveImage = (index: number) => {
-    setProductImages((prevImages) => prevImages.filter((_, i) => i !== index));
+    setProductImageUrls((prevUrls) => prevUrls.filter((_, i) => i !== index));
   };
 
   const validateForm = () => {
     const errors: { [key: string]: string } = {};
-    if (!productName.match(/^[a-zA-Z]/)) {
+    if (!/^[a-zA-Z]/.test(productName)) {
       errors.productName = "Product name must start with a letter.";
     }
     if (!sellerInfo.match(/^[a-zA-Z0-9]/) || /[^a-zA-Z0-9.-]/.test(sellerInfo)) {
       errors.sellerInfo = "Seller info is invalid. Only letters, numbers, - and . are allowed.";
     }
-    if (!stockCount.match(/^[0-9]+$/)) {
-      errors.stockCount = "Stock count must be a number.";
+    if (stockCount === undefined || stockCount < 0) {
+      errors.stockCount = "Stock count must be a positive number.";
     }
-    if (!price.match(/^\d+(\.\d{1,2})?$/)) {
-      errors.price = "Price must be a decimal number.";
+    if (price === undefined || price <= 0) {
+      errors.price = "Price must be a positive decimal number.";
     }
-    if (discountedPrice && !discountedPrice.match(/^\d+(\.\d{1,2})?$/)) {
-      errors.discountedPrice = "Discounted price must be a decimal number.";
+    if (discountedPrice === undefined || discountedPrice < 0) {
+      errors.discountedPrice = "Discounted price must be a non-negative decimal number.";
     }
-    if (!category.match(/^[a-zA-Z\s]+$/)) {
+    if (!/^[a-zA-Z\s]+$/.test(category)) {
       errors.category = "Category must contain only letters and spaces.";
     }
     setFormErrors(errors);
@@ -56,19 +62,20 @@ const AddProduct = () => {
     e.preventDefault();
     if (validateForm()) {
       const product = {
-        id: Date.now(), 
+        id: Date.now(),
         productName,
         sellerInfo,
         stockCount,
         price,
         discountedPrice,
         category,
-        productImages,
+        productImageUrls, 
       };
       const existingProducts = JSON.parse(localStorage.getItem("products") || "[]");
       existingProducts.push(product);
       localStorage.setItem("products", JSON.stringify(existingProducts));
       alert("Product added successfully!");
+      window.location.reload();
     }
   };
 
@@ -101,7 +108,7 @@ const AddProduct = () => {
         <input
           type="number"
           value={stockCount}
-          onChange={(e) => setStockCount(e.target.value)}
+          onChange={(e) => setStockCount(Number(e.target.value))}
           className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
           required
         />
@@ -112,7 +119,7 @@ const AddProduct = () => {
         <input
           type="text"
           value={price}
-          onChange={(e) => setPrice(e.target.value)}
+          onChange={(e) => setPrice(Number(e.target.value))}
           className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
           required
         />
@@ -123,7 +130,7 @@ const AddProduct = () => {
         <input
           type="text"
           value={discountedPrice}
-          onChange={(e) => setDiscountedPrice(e.target.value)}
+          onChange={(e) => setDiscountedPrice(Number(e.target.value))}
           className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
         />
         {formErrors.discountedPrice && <p className="text-red-500 text-sm">{formErrors.discountedPrice}</p>}
@@ -140,18 +147,29 @@ const AddProduct = () => {
         {formErrors.category && <p className="text-red-500 text-sm">{formErrors.category}</p>}
       </div>
       <div className="bg-white p-4 rounded-md shadow-md">
-        <label className="block text-sm font-medium text-gray-700">Product Images:</label>
-        <input
-          type="file"
-          multiple
-          onChange={handleFileChange}
-          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
-        />
+        <label className="block text-sm font-medium text-gray-700">Product Image URL:</label>
+        <div className="flex items-center">
+          <input
+            type="url"
+            value={imageUrl}
+            onChange={(e) => setImageUrl(e.target.value)}
+            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
+          />
+          <button
+            type="button"
+            onClick={handleAddImageUrl}
+            className="ml-2 bg-blue-500 text-white px-4 py-2 rounded-md"
+          >
+            Add Image
+          </button>
+        </div>
+      </div>
+      <div className="bg-white p-4 rounded-md shadow-md">
         <div className="mt-2 flex flex-wrap gap-2">
-          {productImages.map((image, index) => (
+          {productImageUrls.map((url, index) => (
             <div key={index} className="relative w-24 h-24 bg-gray-200 flex items-center justify-center">
               <img
-                src={URL.createObjectURL(image)}
+                src={url}
                 alt={`Product ${index}`}
                 className="object-cover w-full h-full rounded-md"
               />
@@ -166,7 +184,7 @@ const AddProduct = () => {
           ))}
         </div>
       </div>
-      <button type="submit" className="bg-indigo-600 text-white px-4 py-2 mt-2 rounded-md">Add Product</button>
+      <button type="submit" className="bg-blue-500 text-white px-4 py-2 mt-2 rounded-md">Add Product</button>
     </form>
   );
 };
