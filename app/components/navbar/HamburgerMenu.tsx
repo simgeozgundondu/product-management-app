@@ -1,11 +1,15 @@
 import { RxHamburgerMenu } from "react-icons/rx";
 
-const HamburgerMenu = () => {
+interface HamburgerMenuProps {
+    onClick: () => void;
+}
+
+const HamburgerMenu = ({ onClick }: HamburgerMenuProps) => {
     return (
-        <div className="relative flex md:hidden">
-            <RxHamburgerMenu size={25}/>
+        <div className="relative flex pr-4" onClick={onClick}>
+            <RxHamburgerMenu size={25} />
         </div>
     );
 };
 
-export default HamburgerMenu
+export default HamburgerMenu;

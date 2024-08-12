@@ -21,11 +21,11 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <div className="flex flex-col min-h-screen">
-          <Navbar/>
-          <main className="flex-grow bg-slate-100">{children}</main>
-          <Footer/>
+          <Navbar />
+          <main className="flex-grow">{children}</main>
+          <Footer />
         </div>
-        </body>
+      </body>
     </html>
   );
 }

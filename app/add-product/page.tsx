@@ -80,88 +80,98 @@ const AddProduct = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-      <div className="bg-customBackground p-6 rounded-lg shadow-lg w-full">
-        <h2 className="text-2xl font-bold text-center text-gray-800 my-4">Add Product</h2>
-        <form onSubmit={handleSubmit} className="space-y-4 w-[800px] mx-auto">
-          <div className="bg-opacity-50 backdrop-blur-sm bg-orange-200 p-4 rounded-md">
-            <label className="block text-sm font-medium text-gray-700 p-4">Product Name:</label>
+    <div className="min-h-screen flex items-center justify-center p-4 bg-cover bg-center" style={{ backgroundImage: 'url(/homePage-bg.avif)' }}>
+      <div className="w-full max-w-lg md:max-w-2xl mt-8 mt-32 md:mt-32 bg-opacity-50 backdrop-blur-sm bg-slate-100 rounded-lg shadow-lg p-4 md:p-8">
+        <h2 className="text-xl md:text-2xl font-bold text-center text-gray-800 mt-4">Add Product</h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="flex flex-col gap-4">
+            {/* Product Name */}
+            <label className="block text-sm font-medium text-gray-700">Product Name:</label>
             <input
               type="text"
               value={productName}
               onChange={(e) => setProductName(e.target.value)}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
+              className="block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
               required
             />
             {formErrors.productName && <p className="text-red-500 text-sm">{formErrors.productName}</p>}
-
-            <label className="block text-sm font-medium text-gray-700 p-4">Seller Info:</label>
+            
+            {/* Seller Info */}
+            <label className="block text-sm font-medium text-gray-700">Seller Info:</label>
             <input
               type="text"
               value={sellerInfo}
               onChange={(e) => setSellerInfo(e.target.value)}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
+              className="block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
               required
             />
             {formErrors.sellerInfo && <p className="text-red-500 text-sm">{formErrors.sellerInfo}</p>}
-
-            <label className="block text-sm font-medium text-gray-700 p-4">Stock Count:</label>
+            
+            {/* Stock Count */}
+            <label className="block text-sm font-medium text-gray-700">Stock Count:</label>
             <input
               type="number"
               value={stockCount}
               onChange={(e) => setStockCount(Number(e.target.value))}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
+              className="block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
               required
             />
             {formErrors.stockCount && <p className="text-red-500 text-sm">{formErrors.stockCount}</p>}
-            <label className="block text-sm font-medium text-gray-700 p-4">Price:</label>
+            
+            {/* Price */}
+            <label className="block text-sm font-medium text-gray-700">Price:</label>
             <input
               type="number"
               step="0.01"
               value={price}
               onChange={(e) => setPrice(Number(e.target.value))}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
+              className="block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
               required
             />
             {formErrors.price && <p className="text-red-500 text-sm">{formErrors.price}</p>}
-            <label className="block text-sm font-medium text-gray-700 p-4">Discounted Price:</label>
+            
+            {/* Discounted Price */}
+            <label className="block text-sm font-medium text-gray-700">Discounted Price:</label>
             <input
               type="number"
               step="0.01"
               value={discountedPrice}
               onChange={(e) => setDiscountedPrice(Number(e.target.value))}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
+              className="block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
             />
             {formErrors.discountedPrice && <p className="text-red-500 text-sm">{formErrors.discountedPrice}</p>}
-
-            <label className="block text-sm font-medium text-gray-700 p-4">Category:</label>
+            
+            {/* Category */}
+            <label className="block text-sm font-medium text-gray-700">Category:</label>
             <input
               type="text"
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
+              className="block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
               required
             />
             {formErrors.category && <p className="text-red-500 text-sm">{formErrors.category}</p>}
-            <div className="bg-opacity-50 backdrop-blur-sm bg-orange-100 rounded-md">
-              <label className="block text-sm font-medium text-gray-700 p-4">Product Image URL:</label>
-              <div className="flex items-center">
+            
+            {/* Product Image URL */}
+            <div className="bg-opacity-50 backdrop-blur-sm p-4 rounded-md mt-4">
+              <label className="block text-sm font-medium text-gray-700">Product Image URL:</label>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
                 <input
                   type="url"
                   value={imageUrl}
                   onChange={(e) => setImageUrl(e.target.value)}
-                  className="mt-1 block flex-grow border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
+                  className="block flex-grow border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
                 />
                 <button
                   type="button"
                   onClick={handleAddImageUrl}
-                  className="ml-2 bg-blue-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-md flex items-center justify-center"
+                  className="mt-2 sm:mt-0 bg-primaryDarkColor hover:bg-primaryLightColor text-white px-4 py-2 rounded-md flex items-center justify-center"
                 >
                   Add Image
                 </button>
               </div>
             </div>
-
+            
             <div className="mt-2 flex flex-wrap gap-2">
               {productImageUrls.map((url, index) => (
                 <div key={index} className="relative w-24 h-24 bg-gray-200 flex items-center justify-center rounded-md overflow-hidden shadow-md">
@@ -173,22 +183,26 @@ const AddProduct = () => {
                   <button
                     type="button"
                     onClick={() => handleRemoveImage(index)}
-                    className="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full hover:bg-red-700 transition duration-200"
+                    className="absolute top-1 right-1 bg-red-500 hover:bg-red-600 text-white rounded-full p-1"
                   >
                     <AiOutlineClose size={16} />
                   </button>
                 </div>
               ))}
             </div>
-
+            
+            <button
+              type="submit"
+              className="mt-4 w-full bg-secondaryDarkColor hover:bg-secondaryLightColor text-white font-bold py-2 px-4 rounded-md"
+            >
+              Add Product
+            </button>
           </div>
-          <button type="submit" className="w-full bg-blue-500 text-white px-4 py-2 mt-4 rounded-md hover:bg-indigo-600 transition duration-200">
-            Add Product
-          </button>
         </form>
       </div>
     </div>
   );
+  
 };
 
 export default AddProduct;
