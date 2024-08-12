@@ -27,13 +27,16 @@ const ProductList = () => {
         return JSON.parse(savedProducts) as Product[];
       } catch (error) {
         console.error("Failed to parse products from localStorage", error);
-        return []; 
+        return [];
       }
     }
     return [];
   });
-  
 
+  // State to manage filtered products
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>(products);
+
+  // Filter state
   const [filter, setFilter] = useState({
     minPrice: PRICE_RANGE.min,
     maxPrice: PRICE_RANGE.max,
@@ -43,26 +46,48 @@ const ProductList = () => {
   const [activeImageIndexes, setActiveImageIndexes] = useState<number[]>(
     products.map(() => 0)
   );
-  
-  
 
   const [currentPage, setCurrentPage] = useState(1);
-
   const [viewMode, setViewMode] = useState<'grid' | 'compact'>('grid');
 
-  const totalPages = Math.ceil(products.length / ITEMS_PER_PAGE);
+  // Function to update filtered products based on filter criteria
+  const applyFilter = () => {
+    const filtered = products.filter((product) => {
+      const price = product.discountedPrice || product.price;
+      if (price < filter.minPrice || price > filter.maxPrice) return false;
+      if (filter.hideOutOfStock && product.stockCount === 0) return false;
+      return true;
+    });
+    setFilteredProducts(filtered);
+    setCurrentPage(1); // Reset to the first page
+  };
 
-  const paginatedProducts = products.slice(
+  // Function to clear all filters
+  const clearFilter = () => {
+    setFilter({
+      minPrice: PRICE_RANGE.min,
+      maxPrice: PRICE_RANGE.max,
+      hideOutOfStock: false,
+    });
+    setFilteredProducts(products);
+    setCurrentPage(1); // Reset to the first page
+  };
+
+  // Pagination calculations
+  const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
+  const paginatedProducts = filteredProducts.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
   );
 
+  // Page change handler
   const handlePageChange = (newPage: number) => {
     if (newPage > 0 && newPage <= totalPages) {
       setCurrentPage(newPage);
     }
   };
 
+  // Filter slider change handler
   const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFilter((prevFilter) => ({
@@ -71,17 +96,7 @@ const ProductList = () => {
     }));
   };
 
-  const handleFilter = () => {
-    const filteredProducts = products.filter((product) => {
-      const price = product.discountedPrice || product.price;
-
-      if (price < filter.minPrice || price > filter.maxPrice) return false;
-      if (filter.hideOutOfStock && product.stockCount === 0) return false;
-      return true;
-    });
-    setProducts(filteredProducts);
-  };
-
+  // Handle image scroll
   const handleScroll = (direction: "left" | "right", productIndex: number) => {
     setActiveImageIndexes((prevIndexes) => {
       const images = products[productIndex].productImageUrls;
@@ -97,16 +112,9 @@ const ProductList = () => {
       const newIndexes = [...prevIndexes];
       newIndexes[productIndex] = newIndex;
 
-      console.log("Products Length:", products.length);
-      console.log("Active Image Indexes Length:", activeImageIndexes.length);
-      console.log("Product Image Length at Index:", products[productIndex].productImageUrls.length);
-
-
       return newIndexes;
     });
-
   };
-
 
   return (
     <div className="min-h-screen p-4 flex flex-col md:flex-row bg-cover bg-center" style={{ backgroundImage: 'url(/homePage-bg.avif)' }}>
@@ -150,8 +158,11 @@ const ProductList = () => {
               <span className="ml-2 font-light">Hide Out of Stock</span>
             </label>
           </div>
-          <button onClick={handleFilter} className="bg-primaryDarkColor hover:bg-primaryLightColor text-white px-4 py-2 mt-4 rounded-md w-full">
+          <button onClick={applyFilter} className="bg-primaryDarkColor hover:bg-primaryLightColor text-white px-4 py-2 mt-4 rounded-md w-full">
             Filter
+          </button>
+          <button onClick={clearFilter} className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 mt-2 rounded-md w-full">
+            Clear Filter
           </button>
         </div>
       </div>
@@ -170,84 +181,90 @@ const ProductList = () => {
             <MdOutlineViewAgenda />
           </button>
         </div>
-        <div className={`grid gap-4 ${viewMode === 'grid' ? 'grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-2'}`}>
-          {paginatedProducts.map((product, productIndex) => (
-            <div key={product.id} className="border bg-white bg-opacity-80 p-4 rounded-md shadow-md">
-              <div className="relative">
-                {product.productImageUrls?.length > 0 && (
+        {paginatedProducts.length === 0 ? (
+          <div className="rounded-md bg-slate-200 bg-opacity-50 flex justify-center items-center text-center text-lg font-bold text-gray-700">
+            No products available :(
+          </div>
+        ) : (
+          <>
+            <div className={`grid gap-4 ${viewMode === 'grid' ? 'grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-2'}`}>
+              {paginatedProducts.map((product, productIndex) => (
+                <div key={product.id} className="border bg-white bg-opacity-80 p-4 rounded-md shadow-md">
                   <div className="relative">
-                    <div className="flex overflow-x-hidden space-x-2 pb-2">
-                      {product.productImageUrls.map((image, imageIndex) => (
-                        <img
-                          key={imageIndex}
-                          src={image}
-                          alt={product.productName}
-                          onLoad={() => console.log(`Image ${imageIndex} loaded`)}
-                          className={`object-cover ${viewMode === 'grid' ? 'h-40 w-full' : 'h-32 w-full'} rounded-md ${imageIndex === activeImageIndexes[productIndex] ? 'block' : 'hidden'}`}
-                        />
-
-                      ))}
-                    </div>
-                    {product.productImageUrls.length > 1 && (
-                      <>
-                        <button
-                          onClick={() => handleScroll("left", productIndex)}
-                          className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-700 bg-opacity-50 text-white p-2 rounded-full"
-                        >
-                          &lt;
-                        </button>
-                        <button
-                          onClick={() => handleScroll("right", productIndex)}
-                          className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-700 bg-opacity-50 text-white p-2 rounded-full"
-                        >
-                          &gt;
-                        </button>
-                      </>
+                    {product.productImageUrls?.length > 0 && (
+                      <div className="relative">
+                        <div className="flex overflow-x-hidden space-x-2 pb-2">
+                          {product.productImageUrls.map((image, imageIndex) => (
+                            <img
+                              key={imageIndex}
+                              src={image}
+                              alt={product.productName}
+                              className={`object-cover ${viewMode === 'grid' ? 'h-40 w-full' : 'h-32 w-full'} rounded-md ${imageIndex === activeImageIndexes[productIndex] ? 'block' : 'hidden'}`}
+                            />
+                          ))}
+                        </div>
+                        {product.productImageUrls.length > 1 && (
+                          <>
+                            <button
+                              onClick={() => handleScroll("left", productIndex)}
+                              className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-700 bg-opacity-50 text-white p-2 rounded-full"
+                            >
+                              &lt;
+                            </button>
+                            <button
+                              onClick={() => handleScroll("right", productIndex)}
+                              className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-700 bg-opacity-50 text-white p-2 rounded-full"
+                            >
+                              &gt;
+                            </button>
+                          </>
+                        )}
+                      </div>
                     )}
+                    <div className="mt-4">
+                      <h2 className="text-xl font-bold">{product.productName}</h2>
+                      <p>Seller: {product.sellerInfo}</p>
+                      <p>Category: {product.category}</p>
+                      <p>Price: {product.price} TL</p>
+                      {product.discountedPrice && <p className="text-red-500">Discounted Price: {product.discountedPrice} TL</p>}
+                      <button
+                        onClick={() => (window.location.href = `/product-detail/${product.id}`)}
+                        className="bg-secondaryDarkColor hover:bg-secondaryLightColor text-white px-4 py-2 mt-2 rounded-md w-full"
+                      >
+                        Details
+                      </button>
+                    </div>
                   </div>
-                )}
-                <div className="mt-4">
-                  <h2 className="text-xl font-bold">{product.productName}</h2>
-                  <p>Seller: {product.sellerInfo}</p>
-                  <p>Category: {product.category}</p>
-                  <p>Price: {product.price} TL</p>
-                  {product.discountedPrice && <p className="text-red-500">Discounted Price: {product.discountedPrice} TL</p>}
-                  <button
-                    onClick={() => (window.location.href = `/product-detail/${product.id}`)}
-                    className="bg-secondaryDarkColor hover:bg-secondaryLightColor text-white px-4 py-2 mt-2 rounded-md w-full"
-                  >
-                    Details
-                  </button>
                 </div>
-              </div>
+              ))}
             </div>
-          ))}
-        </div>
-        <div className="mt-4 flex justify-center space-x-2">
-          <button
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-            className="bg-slate-500 bg-opacity-30 text-white px-4 py-2 rounded-md"
-          >
-            &lt; Prev
-          </button>
-          {Array.from({ length: totalPages }, (_, index) => (
-            <button
-              key={index + 1}
-              onClick={() => handlePageChange(index + 1)}
-              className={`px-4 py-2 rounded-md ${currentPage === index + 1 ? 'bg-primaryDarkColor text-white' : 'bg-gray-200'}`}
-            >
-              {index + 1}
-            </button>
-          ))}
-          <button
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className="bg-slate-500 bg-opacity-30 text-white px-4 py-2 rounded-md"
-          >
-            Next &gt;
-          </button>
-        </div>
+            <div className="mt-4 flex justify-center space-x-2">
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="bg-slate-500 bg-opacity-30 text-white px-4 py-2 rounded-md"
+              >
+                &lt; Prev
+              </button>
+              {Array.from({ length: totalPages }, (_, index) => (
+                <button
+                  key={index + 1}
+                  onClick={() => handlePageChange(index + 1)}
+                  className={`px-4 py-2 rounded-md ${currentPage === index + 1 ? 'bg-primaryDarkColor text-white' : 'bg-gray-200'}`}
+                >
+                  {index + 1}
+                </button>
+              ))}
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="bg-slate-500 bg-opacity-30 text-white px-4 py-2 rounded-md"
+              >
+                Next &gt;
+              </button>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
