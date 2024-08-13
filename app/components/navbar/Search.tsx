@@ -1,9 +1,13 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 interface Product {
-  productName: string;
+    id: number;
+    productName: string;
+    sellerInfo: string;
+    productImageUrls: string;
 }
 
 const Search = () => {
@@ -12,6 +16,7 @@ const Search = () => {
     const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
     const [activeIndex, setActiveIndex] = useState<number>(-1);
     const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
+    const router = useRouter();
 
     useEffect(() => {
         const storedProducts = localStorage.getItem('products');
@@ -42,9 +47,16 @@ const Search = () => {
             const selectedProduct = filteredProducts[activeIndex];
             setQuery(selectedProduct.productName);
             setIsDropdownOpen(false);
+            router.push(`/product-detail/${selectedProduct.id}`);
         } else if (e.key === 'Escape') {
             setIsDropdownOpen(false);
         }
+    };
+
+    const handleProductClick = (product: Product) => {
+        setQuery(product.productName);
+        setIsDropdownOpen(false);
+        router.push(`/product-detail/${product.id}`);
     };
 
     return (
@@ -57,7 +69,7 @@ const Search = () => {
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={handleKeyDown}
                 onFocus={() => setIsDropdownOpen(filteredProducts.length > 0)}
-                onBlur={() => setTimeout(() => setIsDropdownOpen(false), 100)} // Close dropdown when focus is lost
+                onBlur={() => setTimeout(() => setIsDropdownOpen(false), 100)}
             />
             {isDropdownOpen && (
                 <ul className="absolute top-full left-0 w-full text-gray-500 bg-white border border-gray-300 rounded-lg max-h-60 overflow-y-auto mt-1">
@@ -65,14 +77,15 @@ const Search = () => {
                         filteredProducts.map((product, index) => (
                             <li
                                 key={index}
-                                className={`px-4 py-2 cursor-pointer ${index === activeIndex ? 'bg-gray-200' : ''}`}
+                                className={`flex items-center px-4 py-2 cursor-pointer ${index === activeIndex ? 'bg-gray-200' : ''}`}
                                 onMouseEnter={() => setActiveIndex(index)}
-                                onClick={() => {
-                                    setQuery(product.productName);
-                                    setIsDropdownOpen(false);
-                                }}
+                                onClick={() => handleProductClick(product)}
                             >
-                                {product.productName}
+                                <img src={product.productImageUrls} alt={product.productName} className="object-contain w-10 h-10 mr-4" />
+                                <div>
+                                    <div className="font-semibold">{product.productName}</div>
+                                    <div className="text-sm text-gray-400">Seller: {product.sellerInfo}</div>
+                                </div>
                             </li>
                         ))
                     ) : (

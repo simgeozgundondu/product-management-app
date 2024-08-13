@@ -41,7 +41,7 @@ const ProductList = () => {
     maxPrice: PRICE_RANGE.max,
     hideOutOfStock: false,
     selectedSellers: [] as string[],
-    selectedCategories : [] as string[]
+    selectedCategories: [] as string[]
   });
 
   const [sellers, setSellers] = useState<string[]>([]);
@@ -51,7 +51,7 @@ const ProductList = () => {
   const [currentImageIndexes, setCurrentImageIndexes] = useState<number[]>(
     products.map(() => 0)
   );
-  
+
   const [currentPage, setCurrentPage] = useState(1);
   const [viewMode, setViewMode] = useState<'grid' | 'compact'>('grid');
 
@@ -81,18 +81,18 @@ const ProductList = () => {
     });
   };
 
-  const handleCategorySelection = (category : string) => {
-    setFilter(prevFilter =>{
-      const {selectedCategories} = prevFilter;
-      if(selectedCategories.includes(category)){
-        return{
+  const handleCategorySelection = (category: string) => {
+    setFilter(prevFilter => {
+      const { selectedCategories } = prevFilter;
+      if (selectedCategories.includes(category)) {
+        return {
           ...prevFilter,
-          selectedCategories: selectedCategories.filter(c => c!= category),
+          selectedCategories: selectedCategories.filter(c => c != category),
         }
-      }else{
-        return{
+      } else {
+        return {
           ...prevFilter,
-          selectedCategories : [...selectedCategories,category],
+          selectedCategories: [...selectedCategories, category],
         };
       }
     })
@@ -104,7 +104,7 @@ const ProductList = () => {
       if (price < filter.minPrice || price > filter.maxPrice) return false;
       if (filter.hideOutOfStock && product.stockCount === 0) return false;
       if (filter.selectedSellers.length > 0 && !filter.selectedSellers.includes(product.sellerInfo)) return false;
-      if(filter.selectedCategories.length >0 && !filter.selectedCategories.includes(product.category)) return false;
+      if (filter.selectedCategories.length > 0 && !filter.selectedCategories.includes(product.category)) return false;
 
       return true;
     });
@@ -162,8 +162,8 @@ const ProductList = () => {
       return newIndexes;
     });
   };
-  
-  
+
+
   return (
     <div className="min-h-screen p-4 flex flex-col md:flex-row bg-cover bg-center" style={{ backgroundImage: 'url(/homePage-bg.avif)' }}>
       <div className="w-full md:w-1/4 p-4 mt-28 md:mt-28 bg-white bg-opacity-60 border-r rounded-md md:border-r-0 md:border-b">
@@ -195,7 +195,7 @@ const ProductList = () => {
               <span>Max: {filter.maxPrice}</span>
             </div>
           </div>
-          <hr className="border-slate-500"/>
+          <hr className="border-slate-500" />
           <div>
             <label className="block text-lg font-light text-gray-700 p-2">Sellers:</label>
             <div className="flex flex-wrap px-2">
@@ -212,7 +212,7 @@ const ProductList = () => {
               ))}
             </div>
           </div>
-          <hr className="border-slate-500"/>
+          <hr className="border-slate-500" />
           <div>
             <label className="block text-lg font-light text-gray-700 p-2">Categories:</label>
             <div className="flex flex-wrap px-2">
@@ -229,7 +229,7 @@ const ProductList = () => {
               ))}
             </div>
           </div>
-          <hr className="border-slate-500"/>
+          <hr className="border-slate-500" />
           <div>
             <label className="inline-flex items-center mt-2">
               <input
@@ -308,18 +308,24 @@ const ProductList = () => {
                       </div>
                     )}
                     <div className="text-gray-700 font-semibold text-md pt-2">{product.productName}</div>
-                    <div className="text-red-600 font-medium text-lg pt-2">{product.discountedPrice ? `$${product.discountedPrice}` : `$${product.price}`}</div>
-                    {product.discountedPrice && (
-                      <div className="text-sm text-gray-500 line-through">{`$${product.price}`}</div>
+                    {product.discountedPrice ? (
+                      <>
+                        <div className="flex items-center space-x-2 pt-2">
+                          <p className="text-lg text-gray-500 line-through">${product.price}</p>
+                          <p className="text-red-600 font-medium text-xl"><strong></strong>${product.discountedPrice}</p>
+                        </div>
+                      </>
+                    ) : (
+                      <p className="text-red-600 font-medium text-xl pt-2"><strong></strong>${product.price}</p>
                     )}
                     <div className="text-gray-500 text-sm pt-2">Sold by: {product.sellerInfo}</div>
                     <div className={`text-sm ${product.stockCount > 0 ? 'text-green-600' : 'text-red-600'} pt-2`}>{product.stockCount > 0 ? `In Stock (${product.stockCount})` : 'Out of Stock'}</div>
                     <button
-                        onClick={() => (window.location.href = `/product-detail/${product.id}`)}
-                        className="bg-secondaryDarkColor hover:bg-secondaryLightColor text-white px-4 py-2 mt-2 rounded-md w-full"
-                      >
-                        Details
-                      </button>
+                      onClick={() => (window.location.href = `/product-detail/${product.id}`)}
+                      className="bg-secondaryDarkColor hover:bg-secondaryLightColor text-white px-4 py-2 mt-2 rounded-md w-full"
+                    >
+                      Details
+                    </button>
                   </div>
                 </div>
               ))}

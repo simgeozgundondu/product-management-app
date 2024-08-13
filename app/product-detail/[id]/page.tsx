@@ -61,11 +61,11 @@ const ProductDetail = () => {
     <div className="min-h-screen p-4 bg-cover bg-center" style={{ backgroundImage: 'url(/homePage-bg.avif)' }}>
       <div className="max-w-7xl mx-auto bg-white bg-opacity-80 p-6 rounded-lg shadow-lg mt-32">
         <div className="flex flex-col md:flex-row p-4">
-          <div className="md:w-1/2 relative">
+          <div className=" md:w-1/2 relative ">
             <img
               src={product.productImageUrls[currentImageIndex]}
               alt={product.productName}
-              className="rounded-lg mb-4"
+              className="rounded-lg mb-4 object-cover h-96 w-full"
             />
             {product.productImageUrls.length > 1 && (
               <>
