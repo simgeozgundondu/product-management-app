@@ -7,7 +7,7 @@ interface HamburgerMenuProps {
 const HamburgerMenu = ({ onClick }: HamburgerMenuProps) => {
     return (
         <div className="relative flex pr-4" onClick={onClick}>
-            <RxHamburgerMenu size={25} />
+            <RxHamburgerMenu size={26} />
         </div>
     );
 };

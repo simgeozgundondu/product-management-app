@@ -182,7 +182,7 @@ const ProductList = () => {
           <span>Filter</span>
         </button>
       </div>
-      <div className={`fixed top-24 left-0 h-auto rounded-md bg-slate-100 bg-opacity-100 z-50 transform transition-transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} w-80 shadow-lg`}>
+      <div className={`fixed top-24 left-0 h-auto rounded-md bg-slate-100 bg-opacity-100 z-50 transform transition-transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-500 ease-in-out w-80 shadow-lg`}>
         <div className="p-4 ">
           <div className="space-y-4">
             <div className="flex justify-end">
