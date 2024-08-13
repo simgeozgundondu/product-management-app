@@ -20,7 +20,6 @@ const Sidebar = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) 
                 <Link href="/products" className="font-reenie text-4xl text-white p-4 hover:underline" onClick={onClose}>
                     All Products
                 </Link>
-                {/* Add more links or content here */}
             </div>
         </div>
     );
