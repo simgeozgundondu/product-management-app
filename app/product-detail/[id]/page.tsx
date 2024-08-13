@@ -2,7 +2,7 @@
 
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { FaArrowLeft, FaArrowRight } from 'react-icons/fa'; 
+import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 
 interface Product {
   id: number;
@@ -59,9 +59,8 @@ const ProductDetail = () => {
 
   return (
     <div className="min-h-screen p-4 bg-cover bg-center" style={{ backgroundImage: 'url(/homePage-bg.avif)' }}>
-      <div className="max-w-4xl mx-auto bg-white bg-opacity-80 p-6 rounded-lg shadow-lg mt-32">
-        <h1 className="text-3xl font-bold mb-4">{product.productName}</h1>
-        <div className="flex flex-col md:flex-row">
+      <div className="max-w-7xl mx-auto bg-white bg-opacity-80 p-6 rounded-lg shadow-lg mt-32">
+        <div className="flex flex-col md:flex-row p-4">
           <div className="md:w-1/2 relative">
             <img
               src={product.productImageUrls[currentImageIndex]}
@@ -72,32 +71,71 @@ const ProductDetail = () => {
               <>
                 <button
                   onClick={handlePrevImage}
-                  className="absolute top-1/2 left-0 transform -translate-y-1/2 bg-black text-white p-2 rounded-full"
+                  className="absolute top-1/2 left-0 transform -translate-y-1/2 bg-slate-500 text-white p-2 rounded-full"
                 >
                   <FaArrowLeft />
                 </button>
                 <button
                   onClick={handleNextImage}
-                  className="absolute top-1/2 right-0 transform -translate-y-1/2 bg-black text-white p-2 rounded-full"
+                  className="absolute top-1/2 right-0 transform -translate-y-1/2 bg-slate-500 text-white p-2 rounded-full"
                 >
                   <FaArrowRight />
                 </button>
               </>
             )}
           </div>
-          <div className="md:w-1/2 md:pl-8">
-            <p className="text-lg"><strong>Seller:</strong> {product.sellerInfo}</p>
-            <p className="text-lg"><strong>Category:</strong> {product.category}</p>
-            <p className="text-lg"><strong>Price:</strong> {product.price} TL</p>
-            {product.discountedPrice && <p className="text-lg text-red-500"><strong>Discounted Price:</strong> {product.discountedPrice} TL</p>}
-            <p className="text-lg"><strong>Stock Count:</strong> {product.stockCount}</p>
-            <button
-              disabled={product.stockCount === 0}
-              className={`mt-4 px-6 py-2 rounded-md w-full ${product.stockCount > 0 ? 'bg-primaryDarkColor hover:bg-primaryLightColor text-white' : 'bg-gray-400 cursor-not-allowed'}`}
-            >
-              {product.stockCount > 0 ? 'Buy Now' : 'Out of Stock'}
-            </button>
+          <div className="py-4 md:w-1/2 md:pl-32">
+            <h1 className="text-gray-700 font-semibold text-3xl">{product.productName}</h1>
+            <p className="text-lg text-gray-500 pt-2"><strong>by </strong> {product.sellerInfo}</p>
+            <p className="text-lg text-gray-500 pt-2"><strong>Category:</strong> {product.category}</p>
+            {product.discountedPrice ? (
+              <>
+                <div className="flex items-center space-x-2 pt-2">
+                  <p className="text-lg text-gray-500 line-through">${product.price}</p>
+                  <p className="text-red-600 font-medium text-2xl"><strong></strong>${product.discountedPrice}</p>
+                </div>
+              </>
+            ) : (
+              <p className="text-red-600 font-medium text-xl pt-2"><strong></strong>${product.price}</p>
+            )}
+            <div className='bg-slate-200 bg-opacity-30 shadow-md shadow-slate-400 rounded-md'>
+              <p className="text-sm text-gray-500 p-4">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque unde impedit eaque ut fugit mollitia doloribus excepturi ad sint! Consectetur.
+              </p>
+            </div>
+            <p className={`text-sm pt-2 ${product.stockCount > 0 ? 'text-green-600' : 'text-red-600'}`}>
+              {product.stockCount > 0 ? `In Stock (${product.stockCount})` : 'Out of Stock'}
+            </p>
+
+            <div className="mt-4 space-y-2">
+              {product.stockCount > 0 ? (
+                <>
+                  <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 space-x-0 sm:space-x-3">
+                    <button
+                      className="px-6 py-2 rounded-md w-full bg-primaryDarkColor hover:bg-primaryLightColor text-white"
+                    >
+                      Buy Now
+                    </button>
+                    <button
+                      className="px-6 py-2 rounded-md w-full bg-secondaryDarkColor hover:bg-secondaryLightColor text-white"
+                    >
+                      Add to Cart
+                    </button>
+                  </div>
+
+                </>
+              ) : (
+                <button
+                  disabled
+                  className="px-6 py-2 rounded-md w-full bg-gray-400 cursor-not-allowed text-white"
+                >
+                  Out of Stock
+                </button>
+              )}
+            </div>
+
           </div>
+
         </div>
       </div>
     </div>

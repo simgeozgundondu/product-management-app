@@ -259,13 +259,13 @@ const ProductList = () => {
         <div className="flex justify-end mb-4">
           <button
             onClick={() => setViewMode('grid')}
-            className={`px-4 py-2 mr-2 rounded-md ${viewMode === 'grid' ? 'bg-primaryDarkColor text-white' : 'bg-gray-200'}`}
+            className={`px-4 py-2 mr-2 rounded-md ${viewMode === 'grid' ? 'bg-primaryDarkColor text-white' : 'bg-slate-400'}`}
           >
             <MdGridView />
           </button>
           <button
             onClick={() => setViewMode('compact')}
-            className={`px-4 py-2 rounded-md ${viewMode === 'compact' ? 'bg-primaryDarkColor text-white' : 'bg-gray-200'}`}
+            className={`px-4 py-2 rounded-md ${viewMode === 'compact' ? 'bg-primaryDarkColor text-white' : 'bg-slate-400'}`}
           >
             <MdOutlineViewAgenda />
           </button>
