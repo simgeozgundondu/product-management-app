@@ -1,5 +1,5 @@
 // Importları yapın
-import HomePage from './HomePage/page';
+import HomePage from './homePage/page';
 import type { Metadata } from "next";
 
 // Metadata tanımını ekleyin

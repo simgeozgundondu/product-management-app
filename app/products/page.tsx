@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { FcClearFilters, FcFilledFilter } from "react-icons/fc";
 import { MdGridView, MdOutlineViewAgenda } from "react-icons/md";
 
 const ITEMS_PER_PAGE = 12;
@@ -33,61 +34,109 @@ const ProductList = () => {
     return [];
   });
 
-  // State to manage filtered products
   const [filteredProducts, setFilteredProducts] = useState<Product[]>(products);
-
-  // Filter state
   const [filter, setFilter] = useState({
+
     minPrice: PRICE_RANGE.min,
     maxPrice: PRICE_RANGE.max,
     hideOutOfStock: false,
+    selectedSellers: [] as string[],
+    selectedCategories : [] as string[]
   });
 
-  const [activeImageIndexes, setActiveImageIndexes] = useState<number[]>(
+  const [sellers, setSellers] = useState<string[]>([]);
+
+  const [categories, setCategories] = useState<string[]>([]);
+
+  const [currentImageIndexes, setCurrentImageIndexes] = useState<number[]>(
     products.map(() => 0)
   );
-
+  
   const [currentPage, setCurrentPage] = useState(1);
   const [viewMode, setViewMode] = useState<'grid' | 'compact'>('grid');
 
-  // Function to update filtered products based on filter criteria
+  useEffect(() => {
+    const uniqueSellers = Array.from(new Set(products.map(p => p.sellerInfo)));
+    setSellers(uniqueSellers);
+
+    const unigueCategories = Array.from(new Set(products.map(p => p.category)));
+    setCategories(unigueCategories);
+
+  }, [products]);
+
+  const handleSellerSelection = (seller: string) => {
+    setFilter(prevFilter => {
+      const { selectedSellers } = prevFilter;
+      if (selectedSellers.includes(seller)) {
+        return {
+          ...prevFilter,
+          selectedSellers: selectedSellers.filter(s => s !== seller),
+        };
+      } else {
+        return {
+          ...prevFilter,
+          selectedSellers: [...selectedSellers, seller],
+        };
+      }
+    });
+  };
+
+  const handleCategorySelection = (category : string) => {
+    setFilter(prevFilter =>{
+      const {selectedCategories} = prevFilter;
+      if(selectedCategories.includes(category)){
+        return{
+          ...prevFilter,
+          selectedCategories: selectedCategories.filter(c => c!= category),
+        }
+      }else{
+        return{
+          ...prevFilter,
+          selectedCategories : [...selectedCategories,category],
+        };
+      }
+    })
+  }
+
   const applyFilter = () => {
     const filtered = products.filter((product) => {
       const price = product.discountedPrice || product.price;
       if (price < filter.minPrice || price > filter.maxPrice) return false;
       if (filter.hideOutOfStock && product.stockCount === 0) return false;
+      if (filter.selectedSellers.length > 0 && !filter.selectedSellers.includes(product.sellerInfo)) return false;
+      if(filter.selectedCategories.length >0 && !filter.selectedCategories.includes(product.category)) return false;
+
       return true;
     });
     setFilteredProducts(filtered);
-    setCurrentPage(1); // Reset to the first page
+    setCurrentPage(1);
   };
 
-  // Function to clear all filters
   const clearFilter = () => {
     setFilter({
       minPrice: PRICE_RANGE.min,
       maxPrice: PRICE_RANGE.max,
       hideOutOfStock: false,
+      selectedSellers: [],
+      selectedCategories: []
     });
+
     setFilteredProducts(products);
-    setCurrentPage(1); // Reset to the first page
+    setCurrentPage(1);
   };
 
-  // Pagination calculations
   const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
   const paginatedProducts = filteredProducts.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
   );
 
-  // Page change handler
   const handlePageChange = (newPage: number) => {
     if (newPage > 0 && newPage <= totalPages) {
       setCurrentPage(newPage);
     }
   };
 
-  // Filter slider change handler
   const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFilter((prevFilter) => ({
@@ -96,32 +145,31 @@ const ProductList = () => {
     }));
   };
 
-  // Handle image scroll
-  const handleScroll = (direction: "left" | "right", productIndex: number) => {
-    setActiveImageIndexes((prevIndexes) => {
-      const images = products[productIndex].productImageUrls;
-      const currentIndex = prevIndexes[productIndex];
-      let newIndex;
-
-      if (direction === "left") {
-        newIndex = (currentIndex === 0) ? images.length - 1 : currentIndex - 1;
-      } else {
-        newIndex = (currentIndex === images.length - 1) ? 0 : currentIndex + 1;
-      }
-
+  const handleNextImage = (productIndex: number) => {
+    setCurrentImageIndexes((prevIndexes) => {
       const newIndexes = [...prevIndexes];
-      newIndexes[productIndex] = newIndex;
-
+      newIndexes[productIndex] = (prevIndexes[productIndex] + 1) % products[productIndex].productImageUrls.length;
       return newIndexes;
     });
   };
 
+  const handlePrevImage = (productIndex: number) => {
+    setCurrentImageIndexes((prevIndexes) => {
+      const newIndexes = [...prevIndexes];
+      newIndexes[productIndex] = prevIndexes[productIndex] === 0
+        ? products[productIndex].productImageUrls.length - 1
+        : prevIndexes[productIndex] - 1;
+      return newIndexes;
+    });
+  };
+  
+  
   return (
     <div className="min-h-screen p-4 flex flex-col md:flex-row bg-cover bg-center" style={{ backgroundImage: 'url(/homePage-bg.avif)' }}>
-      <div className="w-full md:w-1/4 p-4 mt-32 md:mt-32 bg-white bg-opacity-60 border-r rounded-md md:border-r-0 md:border-b">
+      <div className="w-full md:w-1/4 p-4 mt-28 md:mt-28 bg-white bg-opacity-60 border-r rounded-md md:border-r-0 md:border-b">
         <div className="space-y-4">
           <div>
-            <label className="block text-lg font-light text-gray-700 p-4">Price Range:</label>
+            <label className="block text-lg font-light text-gray-700 p-2">Price Range:</label>
             <div className="flex flex-col">
               <input
                 type="range"
@@ -147,6 +195,41 @@ const ProductList = () => {
               <span>Max: {filter.maxPrice}</span>
             </div>
           </div>
+          <hr className="border-slate-500"/>
+          <div>
+            <label className="block text-lg font-light text-gray-700 p-2">Sellers:</label>
+            <div className="flex flex-wrap px-2">
+              {sellers.map(seller => (
+                <label key={seller} className="inline-flex items-center pr-2">
+                  <input
+                    type="checkbox"
+                    checked={filter.selectedSellers.includes(seller)}
+                    onChange={() => handleSellerSelection(seller)}
+                    className="form-checkbox"
+                  />
+                  <span className="ml-2 font-light">{seller}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+          <hr className="border-slate-500"/>
+          <div>
+            <label className="block text-lg font-light text-gray-700 p-2">Categories:</label>
+            <div className="flex flex-wrap px-2">
+              {categories.map(category => (
+                <label key={category} className="inline-flex items-center pr-2">
+                  <input
+                    type="checkbox"
+                    checked={filter.selectedCategories.includes(category)}
+                    onChange={() => handleCategorySelection(category)}
+                    className="form-checkbox"
+                  />
+                  <span className="ml-2 font-light">{category}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+          <hr className="border-slate-500"/>
           <div>
             <label className="inline-flex items-center mt-2">
               <input
@@ -158,12 +241,18 @@ const ProductList = () => {
               <span className="ml-2 font-light">Hide Out of Stock</span>
             </label>
           </div>
-          <button onClick={applyFilter} className="bg-primaryDarkColor hover:bg-primaryLightColor text-white px-4 py-2 mt-4 rounded-md w-full">
-            Filter
-          </button>
-          <button onClick={clearFilter} className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 mt-2 rounded-md w-full">
-            Clear Filter
-          </button>
+          <div className="flex justify-center items-center">
+            <button onClick={applyFilter} className="bg-primaryDarkColor hover:bg-primaryLightColor text-white px-4 py-2 mt-4 rounded-md w-full flex items-center justify-center space-x-2">
+              <FcFilledFilter size={25} />
+              <span>Filter</span>
+            </button>
+          </div>
+          <div className="flex justify-center items-center">
+            <button onClick={clearFilter} className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 mt-2 rounded-md w-full flex items-center justify-center space-x-2">
+              <FcClearFilters size={25} />
+              <span>Clear Filter</span>
+            </button>
+          </div>
         </div>
       </div>
       <div className="w-full md:w-3/4 px-4 mt-32 md:mt-32">
@@ -194,26 +283,23 @@ const ProductList = () => {
                     {product.productImageUrls?.length > 0 && (
                       <div className="relative">
                         <div className="flex overflow-x-hidden space-x-2 pb-2">
-                          {product.productImageUrls.map((image, imageIndex) => (
-                            <img
-                              key={imageIndex}
-                              src={image}
-                              alt={product.productName}
-                              className={`object-cover ${viewMode === 'grid' ? 'h-40 w-full' : 'h-32 w-full'} rounded-md ${imageIndex === activeImageIndexes[productIndex] ? 'block' : 'hidden'}`}
-                            />
-                          ))}
+                          <img
+                            src={product.productImageUrls[currentImageIndexes[productIndex]]}
+                            alt={product.productName}
+                            className={`object-cover ${viewMode === 'grid' ? 'h-40 w-full' : 'h-32 w-full'} rounded-md`}
+                          />
                         </div>
                         {product.productImageUrls.length > 1 && (
                           <>
                             <button
-                              onClick={() => handleScroll("left", productIndex)}
-                              className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-700 bg-opacity-50 text-white p-2 rounded-full"
+                              onClick={() => handlePrevImage(productIndex)}
+                              className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-700 bg-opacity-50 text-white p-1 rounded-full"
                             >
                               &lt;
                             </button>
                             <button
-                              onClick={() => handleScroll("right", productIndex)}
-                              className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-700 bg-opacity-50 text-white p-2 rounded-full"
+                              onClick={() => handleNextImage(productIndex)}
+                              className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-700 bg-opacity-50 text-white p-1 rounded-full"
                             >
                               &gt;
                             </button>
@@ -221,48 +307,54 @@ const ProductList = () => {
                         )}
                       </div>
                     )}
-                    <div className="mt-4">
-                      <h2 className="text-xl font-bold">{product.productName}</h2>
-                      <p>Seller: {product.sellerInfo}</p>
-                      <p>Category: {product.category}</p>
-                      <p>Price: {product.price} TL</p>
-                      {product.discountedPrice && <p className="text-red-500">Discounted Price: {product.discountedPrice} TL</p>}
-                      <button
+                    <div className="text-gray-700 font-semibold text-md pt-2">{product.productName}</div>
+                    <div className="text-red-600 font-medium text-lg pt-2">{product.discountedPrice ? `$${product.discountedPrice}` : `$${product.price}`}</div>
+                    {product.discountedPrice && (
+                      <div className="text-sm text-gray-500 line-through">{`$${product.price}`}</div>
+                    )}
+                    <div className="text-gray-500 text-sm pt-2">Sold by: {product.sellerInfo}</div>
+                    <div className={`text-sm ${product.stockCount > 0 ? 'text-green-600' : 'text-red-600'} pt-2`}>{product.stockCount > 0 ? `In Stock (${product.stockCount})` : 'Out of Stock'}</div>
+                    <button
                         onClick={() => (window.location.href = `/product-detail/${product.id}`)}
                         className="bg-secondaryDarkColor hover:bg-secondaryLightColor text-white px-4 py-2 mt-2 rounded-md w-full"
                       >
                         Details
                       </button>
-                    </div>
                   </div>
                 </div>
               ))}
             </div>
-            <div className="mt-4 flex justify-center space-x-2">
+            <div className="flex justify-center items-center space-x-2 mt-4">
               <button
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
-                className="bg-slate-500 bg-opacity-30 text-white px-4 py-2 rounded-md"
+                className={`px-4 py-2 bg-gray-200 rounded-md ${currentPage === 1 ? 'cursor-not-allowed opacity-50' : ''}`}
               >
-                &lt; Prev
+                Previous
               </button>
-              {Array.from({ length: totalPages }, (_, index) => (
-                <button
-                  key={index + 1}
-                  onClick={() => handlePageChange(index + 1)}
-                  className={`px-4 py-2 rounded-md ${currentPage === index + 1 ? 'bg-primaryDarkColor text-white' : 'bg-gray-200'}`}
-                >
-                  {index + 1}
-                </button>
-              ))}
+
+              <div className="flex items-center">
+                {Array.from({ length: totalPages }, (_, index) => (
+                  <button
+                    key={index + 1}
+                    onClick={() => handlePageChange(index + 1)}
+                    className={`px-2 py-1 mx-1 rounded-full ${currentPage === index + 1 ? 'bg-primaryDarkColor text-white' : 'bg-gray-200'
+                      }`}
+                  >
+                    {index + 1}
+                  </button>
+                ))}
+              </div>
+
               <button
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className="bg-slate-500 bg-opacity-30 text-white px-4 py-2 rounded-md"
+                className={`px-4 py-2 bg-gray-200 rounded-md ${currentPage === totalPages ? 'cursor-not-allowed opacity-50' : ''}`}
               >
-                Next &gt;
+                Next
               </button>
             </div>
+
           </>
         )}
       </div>

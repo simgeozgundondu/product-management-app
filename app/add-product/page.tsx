@@ -81,7 +81,7 @@ const AddProduct = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-cover bg-center" style={{ backgroundImage: 'url(/homePage-bg.avif)' }}>
-      <div className="w-full max-w-lg md:max-w-2xl mt-8 mt-32 md:mt-32 bg-opacity-50 backdrop-blur-sm bg-slate-100 rounded-lg shadow-lg p-4 md:p-8">
+      <div className="w-full max-w-md md:max-w-2xl mt-32 md:mt-32 bg-opacity-50 backdrop-blur-sm bg-slate-100 rounded-lg shadow-lg p-4 md:p-8">
         <h2 className="text-xl md:text-2xl font-bold text-center text-gray-800 mt-4">Add Product</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="flex flex-col gap-4">
@@ -122,7 +122,6 @@ const AddProduct = () => {
             <label className="block text-sm font-medium text-gray-700">Price:</label>
             <input
               type="number"
-              step="0.01"
               value={price}
               onChange={(e) => setPrice(Number(e.target.value))}
               className="block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
@@ -134,7 +133,6 @@ const AddProduct = () => {
             <label className="block text-sm font-medium text-gray-700">Discounted Price:</label>
             <input
               type="number"
-              step="0.01"
               value={discountedPrice}
               onChange={(e) => setDiscountedPrice(Number(e.target.value))}
               className="block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
