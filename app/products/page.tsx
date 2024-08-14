@@ -34,24 +34,19 @@ const ProductList = () => {
     return [];
   });
 
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>(products);
   const [filter, setFilter] = useState({
-
     minPrice: PRICE_RANGE.min,
     maxPrice: PRICE_RANGE.max,
     hideOutOfStock: false,
     selectedSellers: [] as string[],
     selectedCategories: [] as string[]
   });
-
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>(products);
   const [sellers, setSellers] = useState<string[]>([]);
-
   const [categories, setCategories] = useState<string[]>([]);
-
   const [currentImageIndexes, setCurrentImageIndexes] = useState<number[]>(
     products.map(() => 0)
   );
-
   const [currentPage, setCurrentPage] = useState(1);
   const [viewMode, setViewMode] = useState<'grid' | 'compact'>('grid');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -88,7 +83,7 @@ const ProductList = () => {
       if (selectedCategories.includes(category)) {
         return {
           ...prevFilter,
-          selectedCategories: selectedCategories.filter(c => c != category),
+          selectedCategories: selectedCategories.filter(c => c !== category),
         }
       } else {
         return {
@@ -98,6 +93,7 @@ const ProductList = () => {
       }
     })
   }
+
 
   const applyFilter = () => {
     const filtered = products.filter((product) => {
@@ -111,7 +107,6 @@ const ProductList = () => {
     });
     setFilteredProducts(filtered);
     setCurrentPage(1);
-    setIsSidebarOpen(false);
   };
 
   const clearFilter = () => {
@@ -125,7 +120,6 @@ const ProductList = () => {
 
     setFilteredProducts(products);
     setCurrentPage(1);
-    setIsSidebarOpen(false);
   };
 
   const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
@@ -169,116 +163,219 @@ const ProductList = () => {
   const handleCloseSidebar = () => {
     setIsSidebarOpen(false);
   };
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleOpenModal = () => setIsModalOpen(true);
+  const handleCloseModal = () => setIsModalOpen(false);
 
 
   return (
-    <div className="min-h-screen p-4 flex flex-col md:flex-row bg-cover bg-center" style={{ backgroundImage: 'url(/homePage-bg.avif)' }}>
-      <div className="absolute top-4 left-4 z-10">
+    <div
+      className="min-h-screen p-4 flex bg-cover bg-center"
+      style={{ backgroundImage: 'url(/homePage-bg.avif)' }}
+    >
+      {/* Mobile Filter Button */}
+      <div className="absolute mt-24 left-4 z-10 md:hidden">
         <button
-          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="mt-24 md:mt-24 flex justify-end ml-8 mb-4 bg-slate-400 hover:bg-primaryDarkColor text-white px-4 py-2 rounded-md items-center space-x-2"
+          onClick={handleOpenModal}
+          className="flex justify-end bg-slate-400 hover:bg-primaryDarkColor text-white px-4 py-2 rounded-md items-center space-x-2"
         >
           <FcFilledFilter size={25} />
           <span>Filter</span>
         </button>
       </div>
-      <div className={`fixed top-24 left-0 h-auto rounded-md bg-slate-100 bg-opacity-100 z-50 transform transition-transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-500 ease-in-out w-80 shadow-lg`}>
-        <div className="p-4 ">
-          <div className="space-y-4">
-            <div className="flex justify-end">
-              <button onClick={handleCloseSidebar} className="pt-1 pr-4 text-lg bg-transparent text-primaryDarkColor">✕</button>
-            </div>
-            <div>
-              <label className="block text-lg font-light text-gray-700 p-2">Price Range:</label>
-              <div className="flex flex-col">
-                <input
-                  type="range"
-                  name="minPrice"
-                  min={PRICE_RANGE.min}
-                  max={PRICE_RANGE.max}
-                  value={filter.minPrice}
-                  onChange={handleSliderChange}
-                  className="w-full"
-                />
-                <input
-                  type="range"
-                  name="maxPrice"
-                  min={filter.minPrice}
-                  max={PRICE_RANGE.max}
-                  value={filter.maxPrice}
-                  onChange={handleSliderChange}
-                  className="w-full"
-                />
+      {/*  filtering on mobile */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-white bg-opacity-90 z-50 overflow-auto">
+          <div className="relative p-4 w-auto mx-auto h-screen bg-white bg-opacity-90 border rounded-md shadow-lg">
+            <button onClick={handleCloseModal} className="absolute top-2 right-2 text-lg text-primaryDarkColor">
+              ✕
+            </button>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-lg font-light text-gray-700 p-2">Price Range:</label>
+                <div className="flex flex-col">
+                  <input
+                    type="range"
+                    name="minPrice"
+                    min={PRICE_RANGE.min}
+                    max={PRICE_RANGE.max}
+                    value={filter.minPrice}
+                    onChange={handleSliderChange}
+                    className="w-full"
+                  />
+                  <input
+                    type="range"
+                    name="maxPrice"
+                    min={filter.minPrice}
+                    max={PRICE_RANGE.max}
+                    value={filter.maxPrice}
+                    onChange={handleSliderChange}
+                    className="w-full"
+                  />
+                </div>
+                <div className="flex justify-between text-sm mt-2">
+                  <span>Min: {filter.minPrice}</span>
+                  <span>Max: {filter.maxPrice}</span>
+                </div>
               </div>
-              <div className="flex justify-between text-sm mt-2">
-                <span>Min: {filter.minPrice}</span>
-                <span>Max: {filter.maxPrice}</span>
+              <hr className="border-slate-500" />
+              <div>
+                <label className="block text-lg font-light text-gray-700 p-2">Sellers:</label>
+                <div className="flex flex-wrap px-2">
+                  {sellers.map(seller => (
+                    <label key={seller} className="inline-flex items-center pr-2">
+                      <input
+                        type="checkbox"
+                        checked={filter.selectedSellers.includes(seller)}
+                        onChange={() => handleSellerSelection(seller)}
+                        className="form-checkbox"
+                      />
+                      <span className="ml-2 font-light">{seller}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+              <hr className="border-slate-500" />
+              <div>
+                <label className="block text-lg font-light text-gray-700 p-2">Categories:</label>
+                <div className="flex flex-wrap px-2">
+                  {categories.map(category => (
+                    <label key={category} className="inline-flex items-center pr-2">
+                      <input
+                        type="checkbox"
+                        checked={filter.selectedCategories.includes(category)}
+                        onChange={() => handleCategorySelection(category)}
+                        className="form-checkbox"
+                      />
+                      <span className="ml-2 font-light">{category}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+              <hr className="border-slate-500" />
+              <div>
+                <label className="inline-flex items-center mt-2">
+                  <input
+                    type="checkbox"
+                    checked={filter.hideOutOfStock}
+                    onChange={(e) => setFilter({ ...filter, hideOutOfStock: e.target.checked })}
+                    className="form-checkbox"
+                  />
+                  <span className="ml-2 font-light">Hide Out of Stock</span>
+                </label>
+              </div>
+              <div className="flex justify-center items-center space-x-2">
+                <button onClick={applyFilter} className="bg-primaryDarkColor hover:bg-primaryLightColor text-white px-4 py-2 rounded-md flex items-center space-x-2">
+                  <FcFilledFilter size={25} />
+                  <span>Filter</span>
+                </button>
+                <button onClick={clearFilter} className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md flex items-center space-x-2">
+                  <FcClearFilters size={25} />
+                  <span>Clear Filter</span>
+                </button>
               </div>
             </div>
-            <hr className="border-slate-500" />
-            <div>
-              <label className="block text-lg font-light text-gray-700 p-2">Sellers:</label>
-              <div className="flex flex-wrap px-2">
-                {sellers.map(seller => (
-                  <label key={seller} className="inline-flex items-center pr-2">
-                    <input
-                      type="checkbox"
-                      checked={filter.selectedSellers.includes(seller)}
-                      onChange={() => handleSellerSelection(seller)}
-                      className="form-checkbox"
-                    />
-                    <span className="ml-2 font-light">{seller}</span>
-                  </label>
-                ))}
-              </div>
+          </div>
+        </div>
+      )}
+      <div className="hidden md:flex md:w-1/4 p-4 mt-36 h-screen bg-white bg-opacity-60 border-r rounded-md sticky top-0 ">
+        <div className="space-y-4">
+          <div className="flex justify-end">
+            <button onClick={handleCloseSidebar} className="pt-1 pr-4 text-lg bg-transparent text-primaryDarkColor md:hidden">✕</button>
+          </div>
+          <div>
+            <label className="block text-lg font-light text-gray-700 p-2">Price Range:</label>
+            <div className="flex flex-col">
+              <input
+                type="range"
+                name="minPrice"
+                min={PRICE_RANGE.min}
+                max={PRICE_RANGE.max}
+                value={filter.minPrice}
+                onChange={handleSliderChange}
+                className="w-full"
+              />
+              <input
+                type="range"
+                name="maxPrice"
+                min={filter.minPrice}
+                max={PRICE_RANGE.max}
+                value={filter.maxPrice}
+                onChange={handleSliderChange}
+                className="w-full"
+              />
             </div>
-            <hr className="border-slate-500" />
-            <div>
-              <label className="block text-lg font-light text-gray-700 p-2">Categories:</label>
-              <div className="flex flex-wrap px-2">
-                {categories.map(category => (
-                  <label key={category} className="inline-flex items-center pr-2">
-                    <input
-                      type="checkbox"
-                      checked={filter.selectedCategories.includes(category)}
-                      onChange={() => handleCategorySelection(category)}
-                      className="form-checkbox"
-                    />
-                    <span className="ml-2 font-light">{category}</span>
-                  </label>
-                ))}
-              </div>
+            <div className="flex justify-between text-sm mt-2">
+              <span>Min: {filter.minPrice}</span>
+              <span>Max: {filter.maxPrice}</span>
             </div>
-            <hr className="border-slate-500" />
-            <div>
-              <label className="inline-flex items-center mt-2">
-                <input
-                  type="checkbox"
-                  checked={filter.hideOutOfStock}
-                  onChange={(e) => setFilter({ ...filter, hideOutOfStock: e.target.checked })}
-                  className="form-checkbox"
-                />
-                <span className="ml-2 font-light">Hide Out of Stock</span>
-              </label>
+          </div>
+          <hr className="border-slate-500" />
+          <div>
+            <label className="block text-lg font-light text-gray-700 p-2">Sellers:</label>
+            <div className="flex flex-wrap px-2">
+              {sellers.map(seller => (
+                <label key={seller} className="inline-flex items-center pr-2">
+                  <input
+                    type="checkbox"
+                    checked={filter.selectedSellers.includes(seller)}
+                    onChange={() => handleSellerSelection(seller)}
+                    className="form-checkbox"
+                  />
+                  <span className="ml-2 font-light">{seller}</span>
+                </label>
+              ))}
             </div>
-            <div className="flex justify-center items-center">
-              <button onClick={applyFilter} className="bg-primaryDarkColor hover:bg-primaryLightColor text-white px-4 py-2 mt-4 rounded-md w-full flex items-center justify-center space-x-2">
-                <FcFilledFilter size={25} />
-                <span>Filter</span>
-              </button>
+          </div>
+          <hr className="border-slate-500" />
+          <div>
+            <label className="block text-lg font-light text-gray-700 p-2">Categories:</label>
+            <div className="flex flex-wrap px-2">
+              {categories.map(category => (
+                <label key={category} className="inline-flex items-center pr-2">
+                  <input
+                    type="checkbox"
+                    checked={filter.selectedCategories.includes(category)}
+                    onChange={() => handleCategorySelection(category)}
+                    className="form-checkbox"
+                  />
+                  <span className="ml-2 font-light">{category}</span>
+                </label>
+              ))}
             </div>
-            <div className="flex justify-center items-center">
-              <button onClick={clearFilter} className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 mt-2 rounded-md w-full flex items-center justify-center space-x-2">
-                <FcClearFilters size={25} />
-                <span>Clear Filter</span>
-              </button>
-            </div>
+          </div>
+          <hr className="border-slate-500" />
+          <div>
+            <label className="inline-flex items-center mt-2">
+              <input
+                type="checkbox"
+                checked={filter.hideOutOfStock}
+                onChange={(e) => setFilter({ ...filter, hideOutOfStock: e.target.checked })}
+                className="form-checkbox"
+              />
+              <span className="ml-2 font-light">Hide Out of Stock</span>
+            </label>
+          </div>
+          <div className="flex justify-center items-center">
+            <button onClick={applyFilter} className="bg-primaryDarkColor hover:bg-primaryLightColor text-white px-4 py-2 mt-4 rounded-md w-full flex items-center justify-center space-x-2">
+              <FcFilledFilter size={25} />
+              <span>Filter</span>
+            </button>
+          </div>
+          <div className="flex justify-center items-center">
+            <button onClick={clearFilter} className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 mt-2 rounded-md w-full flex items-center justify-center space-x-2">
+              <FcClearFilters size={25} />
+              <span>Clear Filter</span>
+            </button>
           </div>
         </div>
       </div>
 
-      <div className="w-full md:w-4/4 px-4 mt-24 md:mt-24">
-        <div className="flex justify-end mb-4">
+      {/* Content Section */}
+      <div className="w-full md:w-4/4 ml-4 px-4 mt-24 md:mt-24">
+        <div className="flex justify-end ">
           <button
             onClick={() => setViewMode('grid')}
             className={`px-4 py-2 mr-2 rounded-md ${viewMode === 'grid' ? 'bg-primaryDarkColor text-white' : 'bg-slate-400'}`}
@@ -298,30 +395,31 @@ const ProductList = () => {
           </div>
         ) : (
           <>
-            <div className={`grid gap-4 ${viewMode === 'grid' ? 'grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-2'}`}>
+            <div className={`grid gap-4 p-4 ${viewMode === 'grid' ? 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'}`}>
               {paginatedProducts.map((product, productIndex) => (
-                <div key={product.id} className={`${viewMode === 'grid' ? 'border bg-white bg-opacity-80 p-4 rounded-md shadow-md' : 'border bg-white bg-opacity-80 p-8 rounded-md shadow-md'}`}>
-                  <div className="relative">
+                <div
+                  key={product.id}
+                  className={`border bg-white bg-opacity-80 rounded-md shadow-md overflow-hidden ${viewMode === 'grid' ? 'w-full max-w-xs' : 'w-full max-w-lg'}`}
+                >
+                  <div className="relative w-full h-40">
                     {product.productImageUrls?.length > 0 && (
-                      <div className="relative">
-                        <div className="flex overflow-x-hidden space-x-2 pb-2">
-                          <img
-                            src={product.productImageUrls[currentImageIndexes[productIndex]]}
-                            alt={product.productName}
-                            className={`object-cover ${viewMode === 'grid' ? 'h-40 w-full' : 'h-72 w-full'} rounded-md`}
-                          />
-                        </div>
+                      <div className="relative p-4 w-full h-full">
+                        <img
+                          src={product.productImageUrls[currentImageIndexes[productIndex]]}
+                          alt={product.productName}
+                          className="object-contain w-full h-full"
+                        />
                         {product.productImageUrls.length > 1 && (
                           <>
                             <button
                               onClick={() => handlePrevImage(productIndex)}
-                              className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-700 bg-opacity-50 text-white p-1 rounded-full"
+                              className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-gray-700 bg-opacity-50 text-white p-1 text-xs rounded-full"
                             >
                               &lt;
                             </button>
                             <button
                               onClick={() => handleNextImage(productIndex)}
-                              className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-700 bg-opacity-50 text-white p-1 rounded-full"
+                              className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-gray-700 bg-opacity-50 text-white p-1 text-xs rounded-full"
                             >
                               &gt;
                             </button>
@@ -329,22 +427,24 @@ const ProductList = () => {
                         )}
                       </div>
                     )}
-                    <div className="text-gray-700 font-semibold text-md pt-2">{product.productName}</div>
+                  </div>
+                  <div className="p-2 flex flex-col justify-between h-40">
+                    <div className="text-gray-700 font-semibold text-sm truncate">{product.productName}</div>
                     {product.discountedPrice ? (
-                      <>
-                        <div className="flex items-center space-x-2 pt-2">
-                          <p className="text-lg text-gray-500 line-through">${product.price}</p>
-                          <p className="text-red-600 font-medium text-xl"><strong></strong>${product.discountedPrice}</p>
-                        </div>
-                      </>
+                      <div className="flex items-center space-x-1 pt-1">
+                        <p className="text-xs text-gray-500 line-through">${product.price}</p>
+                        <p className="text-red-600 font-medium text-sm">${product.discountedPrice}</p>
+                      </div>
                     ) : (
-                      <p className="text-red-600 font-medium text-xl pt-2"><strong></strong>${product.price}</p>
+                      <p className="text-red-600 font-medium text-sm pt-1">${product.price}</p>
                     )}
-                    <div className="text-gray-500 text-sm pt-2">Sold by: {product.sellerInfo}</div>
-                    <div className={`text-sm ${product.stockCount > 0 ? 'text-green-600' : 'text-red-600'} pt-2`}>{product.stockCount > 0 ? `In Stock (${product.stockCount})` : 'Out of Stock'}</div>
+                    <div className="text-gray-500 text-xs pt-1 truncate">Sold by: {product.sellerInfo}</div>
+                    <div className={`text-xs ${product.stockCount > 0 ? 'text-green-600' : 'text-red-600'} pt-1`}>
+                      {product.stockCount > 0 ? `In Stock (${product.stockCount})` : 'Out of Stock'}
+                    </div>
                     <button
                       onClick={() => (window.location.href = `/product-detail/${product.id}`)}
-                      className="bg-secondaryDarkColor hover:bg-secondaryLightColor text-white px-4 p-2 mt-2 rounded-md w-full"
+                      className="bg-transparent border border-black hover:bg-gray-500 hover:text-white text-black hover:border-none justify-center py-1 mt-2 rounded-md mx-4 text-xs"
                     >
                       Details
                     </button>
@@ -352,11 +452,13 @@ const ProductList = () => {
                 </div>
               ))}
             </div>
+
+
             <div className="flex justify-center items-center space-x-2 mt-4">
               <button
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
-                className={`px-4 py-2 bg-gray-200 rounded-md ${currentPage === 1 ? 'cursor-not-allowed opacity-50' : ''}`}
+                className={`px-4 py-2 bg-gray-500 rounded-md ${currentPage === 1 ? 'cursor-not-allowed opacity-50' : ''}`}
               >
                 Previous
               </button>
@@ -377,17 +479,19 @@ const ProductList = () => {
               <button
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className={`px-4 py-2 bg-gray-200 rounded-md ${currentPage === totalPages ? 'cursor-not-allowed opacity-50' : ''}`}
+                className={`px-4 py-2 bg-gray-00 rounded-md ${currentPage === totalPages ? 'cursor-not-allowed opacity-50' : ''}`}
               >
                 Next
               </button>
             </div>
-
           </>
         )}
       </div>
+
     </div>
   );
+
+
 };
 
 export default ProductList;

@@ -1,5 +1,5 @@
 "use client";
-
+import InputMask from 'react-input-mask';
 import { useState } from "react";
 import { AiOutlineClose } from "react-icons/ai";
 
@@ -71,6 +71,7 @@ const AddProduct = () => {
         category,
         productImageUrls,
       };
+
       const existingProducts = JSON.parse(localStorage.getItem("products") || "[]");
       existingProducts.push(product);
       localStorage.setItem("products", JSON.stringify(existingProducts));
@@ -82,10 +83,12 @@ const AddProduct = () => {
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-cover bg-center" style={{ backgroundImage: 'url(/homePage-bg.avif)' }}>
       <div className="w-full max-w-md md:max-w-2xl mt-32 md:mt-32 bg-opacity-50 backdrop-blur-sm bg-slate-100 rounded-lg shadow-lg p-4 md:p-8">
-        <h2 className="text-xl md:text-2xl font-bold text-center text-gray-800 mt-4">Add Product</h2>
+        <h2 className="text-xl md:text-3xl font-semibold text-center text-gray-800 mt-4">Add New Product</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="flex flex-col gap-4">
-            {/* Product Name */}
+            <div className="flex">
+              <div></div>
+            </div>
             <label className="block text-sm font-medium text-gray-700">Product Name:</label>
             <input
               type="text"
@@ -96,7 +99,6 @@ const AddProduct = () => {
             />
             {formErrors.productName && <p className="text-red-500 text-sm">{formErrors.productName}</p>}
             
-            {/* Seller Info */}
             <label className="block text-sm font-medium text-gray-700">Seller Info:</label>
             <input
               type="text"
@@ -107,39 +109,35 @@ const AddProduct = () => {
             />
             {formErrors.sellerInfo && <p className="text-red-500 text-sm">{formErrors.sellerInfo}</p>}
             
-            {/* Stock Count */}
             <label className="block text-sm font-medium text-gray-700">Stock Count:</label>
-            <input
-              type="number"
-              value={stockCount}
+            <InputMask
+              mask="99999.99"
+              value={stockCount === undefined ? '' : stockCount.toString()}
               onChange={(e) => setStockCount(Number(e.target.value))}
               className="block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
               required
             />
             {formErrors.stockCount && <p className="text-red-500 text-sm">{formErrors.stockCount}</p>}
             
-            {/* Price */}
             <label className="block text-sm font-medium text-gray-700">Price:</label>
-            <input
-              type="number"
-              value={price}
-              onChange={(e) => setPrice(Number(e.target.value))}
+            <InputMask
+              mask="99999.99"
+              value={price === undefined ? '' : price.toFixed(2)}
+              onChange={(e) => setPrice(parseFloat(e.target.value))}
               className="block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
               required
             />
             {formErrors.price && <p className="text-red-500 text-sm">{formErrors.price}</p>}
             
-            {/* Discounted Price */}
             <label className="block text-sm font-medium text-gray-700">Discounted Price:</label>
-            <input
-              type="number"
-              value={discountedPrice}
-              onChange={(e) => setDiscountedPrice(Number(e.target.value))}
+            <InputMask
+              mask="99999.99"
+              value={discountedPrice === undefined ? '' : discountedPrice.toFixed(2)}
+              onChange={(e) => setDiscountedPrice(parseFloat(e.target.value))}
               className="block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
             />
             {formErrors.discountedPrice && <p className="text-red-500 text-sm">{formErrors.discountedPrice}</p>}
             
-            {/* Category */}
             <label className="block text-sm font-medium text-gray-700">Category:</label>
             <input
               type="text"
@@ -150,7 +148,6 @@ const AddProduct = () => {
             />
             {formErrors.category && <p className="text-red-500 text-sm">{formErrors.category}</p>}
             
-            {/* Product Image URL */}
             <div className="bg-opacity-50 backdrop-blur-sm p-4 rounded-md mt-4">
               <label className="block text-sm font-medium text-gray-700">Product Image URL:</label>
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">

@@ -18,16 +18,19 @@ const config: Config = {
         customBackground: '#f4f4ed',
         primaryDarkColor:'#0284c7',
         primaryLightColor:'#93c5fd',
-        secondaryLightColor :'#FFD5AD',
-        secondaryDarkColor : '#FD9670',
+        secondaryLightColor :'#fb571a',
+        secondaryDarkColor : '#fc9067',
         lightColor :'#F8F7FF'
       },
       fontFamily: {
         'reenie': ['"Reenie Beanie"', 'cursive'],
+        'quicksand' : ['"Quicksand", sans-serif']
       },
       
     },
   },
-  plugins: [],
+  plugins: [
+    require('tailwind-scrollbar'),
+  ],
 };
 export default config;

@@ -63,7 +63,7 @@ const Search = () => {
         <div className="relative flex-2 md:flex-1">
             <input
                 type="text"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-500 focus:outline-none focus:border-blue-500"
+                className="w-full px-4 py-2 border font-quicksand border-gray-300 rounded-lg text-gray-800 focus:outline-none focus:border-blue-500"
                 placeholder="Search for products..."
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
@@ -89,7 +89,7 @@ const Search = () => {
                             </li>
                         ))
                     ) : (
-                        <li className="px-4 py-2 text-red-600">No products found :(</li>
+                        <li className="px-4 py-2 text-red-600 font-quicksand">No products found :(</li>
                     )}
                 </ul>
             )}
