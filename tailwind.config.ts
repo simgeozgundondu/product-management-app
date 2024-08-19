@@ -27,6 +27,7 @@ const config: Config = {
         'quicksand' : ['"Quicksand", sans-serif']
       },
       
+      
     },
   },
   plugins: [

@@ -60,7 +60,7 @@ const Search = () => {
     };
 
     return (
-        <div className="relative flex-2 md:flex-1">
+        <div className="relative md:mx-16 flex-2 md:flex-1">
             <input
                 type="text"
                 className="w-full px-4 py-2 border font-quicksand border-gray-300 rounded-lg text-gray-800 focus:outline-none focus:border-blue-500"

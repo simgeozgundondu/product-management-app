@@ -178,7 +178,7 @@ const ProductList = () => {
       <div className="absolute mt-24 left-4 z-10 md:hidden">
         <button
           onClick={handleOpenModal}
-          className="flex justify-end bg-slate-400 hover:bg-primaryDarkColor text-white px-4 py-2 rounded-md items-center space-x-2"
+          className="flex justify-start ml-8 bg-slate-400 hover:bg-primaryDarkColor text-white px-4 py-2 rounded-md items-center space-x-2"
         >
           <FcFilledFilter size={25} />
           <span>Filter</span>
@@ -186,15 +186,15 @@ const ProductList = () => {
       </div>
       {/*  filtering on mobile */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-white bg-opacity-90 z-50 overflow-auto">
-          <div className="relative p-4 w-auto mx-auto h-screen bg-white bg-opacity-90 border rounded-md shadow-lg">
-            <button onClick={handleCloseModal} className="absolute top-2 right-2 text-lg text-primaryDarkColor">
+        <div className="fixed inset-0 bg-white bg-opacity-100 border rounded-md shadow-lg z-50 overflow-auto p-4">
+          <div className="relative p-4 w-auto mx-auto h-screen ">
+            <button onClick={handleCloseModal} className="absolute top-2 right-2 text-2xl  bg-transparent text-primaryDarkColor">
               ✕
             </button>
 
-            <div className="space-y-4">
+            <div className="space-y-4 py-8">
               <div>
-                <label className="block text-lg font-light text-gray-700 p-2">Price Range:</label>
+                <label className="block text-lg font-light text-gray-700 p-8 pt-2">Price Range:</label>
                 <div className="flex flex-col">
                   <input
                     type="range"
@@ -267,11 +267,11 @@ const ProductList = () => {
                 </label>
               </div>
               <div className="flex justify-center items-center space-x-2">
-                <button onClick={applyFilter} className="bg-primaryDarkColor hover:bg-primaryLightColor text-white px-4 py-2 rounded-md flex items-center space-x-2">
+                <button onClick={applyFilter} className="bg-primaryDarkColor hover:bg-primaryLightColor text-white px-4 rounded-md flex items-center space-x-2">
                   <FcFilledFilter size={25} />
                   <span>Filter</span>
                 </button>
-                <button onClick={clearFilter} className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md flex items-center space-x-2">
+                <button onClick={clearFilter} className="bg-gray-500 hover:bg-gray-600 text-white px-4 mb-4 py-2 rounded-md flex items-center space-x-2 ">
                   <FcClearFilters size={25} />
                   <span>Clear Filter</span>
                 </button>
@@ -280,7 +280,7 @@ const ProductList = () => {
           </div>
         </div>
       )}
-      <div className="hidden md:flex md:w-1/4 p-4 mt-36 h-screen bg-white bg-opacity-60 border-r rounded-md sticky top-0 ">
+      <div className="hidden md:flex md:w-1/4 p-4 mt-36 h-screen bg-white bg-opacity-60 border-r rounded-md sticky top-0 overflow-y-auto">
         <div className="space-y-4">
           <div className="flex justify-end">
             <button onClick={handleCloseSidebar} className="pt-1 pr-4 text-lg bg-transparent text-primaryDarkColor md:hidden">✕</button>
@@ -365,7 +365,7 @@ const ProductList = () => {
             </button>
           </div>
           <div className="flex justify-center items-center">
-            <button onClick={clearFilter} className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 mt-2 rounded-md w-full flex items-center justify-center space-x-2">
+            <button onClick={clearFilter} className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 b-8 mt-2 mb-8 rounded-md w-full flex items-center justify-center space-x-2">
               <FcClearFilters size={25} />
               <span>Clear Filter</span>
             </button>
@@ -394,12 +394,12 @@ const ProductList = () => {
             No products available :(
           </div>
         ) : (
-          <>
-            <div className={`grid gap-4 p-4 ${viewMode === 'grid' ? 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'}`}>
+          <><div className="min-h-screen bg-white bg-opacity-80 rounded-md shadow-md">
+            <div className={`grid gap-8 my-4 px-16 py-4  ${viewMode === 'grid' ? 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'}`}>
               {paginatedProducts.map((product, productIndex) => (
                 <div
                   key={product.id}
-                  className={`border bg-white bg-opacity-80 rounded-md shadow-md overflow-hidden ${viewMode === 'grid' ? 'w-full max-w-xs' : 'w-full max-w-lg'}`}
+                  className={`max-h-[320px] border bg-white bg-opacity-80 rounded-md shadow-md overflow-hidden ${viewMode === 'grid' ? 'w-full max-w-xs' : 'w-full max-w-lg'} hover:border hover:shadow-gray-500 hover:shadow-lg`}
                 >
                   <div className="relative w-full h-40">
                     {product.productImageUrls?.length > 0 && (
@@ -452,6 +452,8 @@ const ProductList = () => {
                 </div>
               ))}
             </div>
+          </div>
+
 
 
             <div className="flex justify-center items-center space-x-2 mt-4">
@@ -479,7 +481,7 @@ const ProductList = () => {
               <button
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className={`px-4 py-2 bg-gray-00 rounded-md ${currentPage === totalPages ? 'cursor-not-allowed opacity-50' : ''}`}
+                className={`px-4 py-2 bg-gray-500 rounded-md ${currentPage === totalPages ? 'cursor-not-allowed opacity-50' : ''}`}
               >
                 Next
               </button>
