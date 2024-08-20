@@ -58,8 +58,8 @@ const ProductDetail = () => {
   }
 
   return (
-    <div className="min-h-screen p-4 bg-cover bg-center" style={{ backgroundImage: 'url(/homePage-bg.avif)' }}>
-      <div className="max-w-7xl mx-auto bg-white bg-opacity-80 p-6 rounded-lg shadow-lg mt-32">
+    <div className="min-h-screen p-4 bg-white">
+      <div className="max-w-7xl mx-auto bg-white bg-opacity-80 p-6 mt-32">
         <div className="flex flex-col md:flex-row p-4">
           <div className=" md:w-1/2 relative ">
             <img
@@ -71,13 +71,13 @@ const ProductDetail = () => {
               <>
                 <button
                   onClick={handlePrevImage}
-                  className="absolute top-1/2 left-0 transform -translate-y-1/2 bg-slate-500 text-white p-2 rounded-full"
+                  className="btn absolute top-1/2 left-0 transform -translate-y-1/2 bg-slate-500 text-white p-2 rounded-full"
                 >
                   <FaArrowLeft />
                 </button>
                 <button
                   onClick={handleNextImage}
-                  className="absolute top-1/2 right-0 transform -translate-y-1/2 bg-slate-500 text-white p-2 rounded-full"
+                  className="btn absolute top-1/2 right-0 transform -translate-y-1/2 bg-slate-500 text-white p-2 rounded-full"
                 >
                   <FaArrowRight />
                 </button>
@@ -86,7 +86,7 @@ const ProductDetail = () => {
           </div>
           <div className="py-4 md:w-1/2 md:pl-32">
             <h1 className="text-gray-700 font-semibold text-3xl">{product.productName}</h1>
-            <p className="text-lg text-gray-500 pt-2"><strong>by </strong> {product.sellerInfo}</p>
+            <p className="text-lg text-gray-500 pt-2"><strong>By </strong> {product.sellerInfo}</p>
             <p className="text-lg text-gray-500 pt-2"><strong>Category:</strong> {product.category}</p>
             {product.discountedPrice ? (
               <>
@@ -99,7 +99,7 @@ const ProductDetail = () => {
               <p className="text-red-600 font-medium text-xl pt-2"><strong></strong>${product.price}</p>
             )}
             <div className='bg-slate-200 bg-opacity-30 shadow-md shadow-slate-400 rounded-md'>
-              <p className="text-sm text-gray-500 p-4">
+              <p className="text-sm text-gray-500 p-4 my-4">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque unde impedit eaque ut fugit mollitia doloribus excepturi ad sint! Consectetur.
               </p>
             </div>
@@ -112,12 +112,12 @@ const ProductDetail = () => {
                 <>
                   <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 space-x-0 sm:space-x-3">
                     <button
-                      className="px-6 py-2 rounded-md w-full bg-primaryDarkColor hover:bg-primaryLightColor text-white"
+                      className="btn px-6 py-2 rounded-md w-full bg-primaryDarkColor hover:bg-primaryLightColor text-white"
                     >
                       Buy Now
                     </button>
                     <button
-                      className="px-6 py-2 rounded-md w-full bg-secondaryDarkColor hover:bg-secondaryLightColor text-white"
+                      className="btn px-6 py-2 rounded-md w-full bg-secondaryDarkColor hover:bg-secondaryLightColor text-white"
                     >
                       Add to Cart
                     </button>

@@ -2,6 +2,9 @@
 import { useEffect, useState } from "react";
 import { FcClearFilters, FcFilledFilter } from "react-icons/fc";
 import { MdGridView, MdOutlineViewAgenda } from "react-icons/md";
+import { ScrollArea } from "@/components/ui/scroll-area"
+
+
 
 const ITEMS_PER_PAGE = 12;
 const PRICE_RANGE = {
@@ -170,15 +173,12 @@ const ProductList = () => {
 
 
   return (
-    <div
-      className="min-h-screen p-4 flex bg-cover bg-center"
-      style={{ backgroundImage: 'url(/homePage-bg.avif)' }}
-    >
+    <div className="min-h-screen p-4 flex">
       {/* Mobile Filter Button */}
-      <div className="absolute mt-24 left-4 z-10 md:hidden">
+      <div className="absolute mt-20 py-3 left-4 z-10 md:hidden">
         <button
           onClick={handleOpenModal}
-          className="flex justify-start ml-8 bg-slate-400 hover:bg-primaryDarkColor text-white px-4 py-2 rounded-md items-center space-x-2"
+          className="btn flex justify-start ml-10 bg-slate-400 hover:bg-primaryDarkColor text-white px-2 py-2 rounded-md items-center space-x-2"
         >
           <FcFilledFilter size={25} />
           <span>Filter</span>
@@ -186,15 +186,15 @@ const ProductList = () => {
       </div>
       {/*  filtering on mobile */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-white bg-opacity-100 border rounded-md shadow-lg z-50 overflow-auto p-4">
+        <div className="fixed inset-0 bg-white border rounded-md shadow-lg z-50 overflow-auto p-4">
           <div className="relative p-4 w-auto mx-auto h-screen ">
-            <button onClick={handleCloseModal} className="absolute top-2 right-2 text-2xl  bg-transparent text-primaryDarkColor">
+            <button onClick={handleCloseModal} className="btn absolute top-2 right-2 text-2xl  bg-transparent text-primaryDarkColor">
               ✕
             </button>
 
             <div className="space-y-4 py-8">
               <div>
-                <label className="block text-lg font-light text-gray-700 p-8 pt-2">Price Range:</label>
+                <label className="block text-lg font-light text-gray-700 p-4 pt-2">Price Range:</label>
                 <div className="flex flex-col">
                   <input
                     type="range"
@@ -215,15 +215,15 @@ const ProductList = () => {
                     className="w-full"
                   />
                 </div>
-                <div className="flex justify-between text-sm mt-2">
+                <div className="flex justify-between text-sm my-2">
                   <span>Min: {filter.minPrice}</span>
                   <span>Max: {filter.maxPrice}</span>
                 </div>
               </div>
               <hr className="border-slate-500" />
               <div>
-                <label className="block text-lg font-light text-gray-700 p-2">Sellers:</label>
-                <div className="flex flex-wrap px-2">
+                <label className="block text-lg font-bold text-gray-700 p-2">Sellers</label>
+                <div className="flex flex-col px-2">
                   {sellers.map(seller => (
                     <label key={seller} className="inline-flex items-center pr-2">
                       <input
@@ -239,8 +239,8 @@ const ProductList = () => {
               </div>
               <hr className="border-slate-500" />
               <div>
-                <label className="block text-lg font-light text-gray-700 p-2">Categories:</label>
-                <div className="flex flex-wrap px-2">
+                <label className="block text-lg font-bold text-gray-700 p-2">Categories</label>
+                <div className="flex flex-col px-2">
                   {categories.map(category => (
                     <label key={category} className="inline-flex items-center pr-2">
                       <input
@@ -267,11 +267,11 @@ const ProductList = () => {
                 </label>
               </div>
               <div className="flex justify-center items-center space-x-2">
-                <button onClick={applyFilter} className="bg-primaryDarkColor hover:bg-primaryLightColor text-white px-4 rounded-md flex items-center space-x-2">
+                <button onClick={applyFilter} className="btn bg-primaryDarkColor hover:bg-primaryLightColor text-white px-4 rounded-md flex items-center space-x-2">
                   <FcFilledFilter size={25} />
                   <span>Filter</span>
                 </button>
-                <button onClick={clearFilter} className="bg-gray-500 hover:bg-gray-600 text-white px-4 mb-4 py-2 rounded-md flex items-center space-x-2 ">
+                <button onClick={clearFilter} className="btn bg-gray-500 hover:bg-gray-600 text-white px-4 mb-4 py-2 rounded-md flex items-center space-x-2 ">
                   <FcClearFilters size={25} />
                   <span>Clear Filter</span>
                 </button>
@@ -280,217 +280,223 @@ const ProductList = () => {
           </div>
         </div>
       )}
-      <div className="hidden md:flex md:w-1/4 p-4 mt-36 h-screen bg-white bg-opacity-60 border-r rounded-md sticky top-0 overflow-y-auto">
-        <div className="space-y-4">
-          <div className="flex justify-end">
-            <button onClick={handleCloseSidebar} className="pt-1 pr-4 text-lg bg-transparent text-primaryDarkColor md:hidden">✕</button>
-          </div>
-          <div>
-            <label className="block text-lg font-light text-gray-700 p-2">Price Range:</label>
-            <div className="flex flex-col">
-              <input
-                type="range"
-                name="minPrice"
-                min={PRICE_RANGE.min}
-                max={PRICE_RANGE.max}
-                value={filter.minPrice}
-                onChange={handleSliderChange}
-                className="w-full"
-              />
-              <input
-                type="range"
-                name="maxPrice"
-                min={filter.minPrice}
-                max={PRICE_RANGE.max}
-                value={filter.maxPrice}
-                onChange={handleSliderChange}
-                className="w-full"
-              />
+      <div className="hidden md:flex md:w-1/4 pl-2 top-24 h-screen bg-white bg-opacity-80 border-r rounded-md sticky">
+        <ScrollArea className="h-full w-full rounded-md border p-4">
+          <div className="space-y-4">
+            <div className="flex justify-end">
+              <button onClick={handleCloseSidebar} className="btn pt-1 pr-4 text-lg bg-transparent text-primaryDarkColor md:hidden">✕</button>
             </div>
-            <div className="flex justify-between text-sm mt-2">
-              <span>Min: {filter.minPrice}</span>
-              <span>Max: {filter.maxPrice}</span>
+            <div>
+              <label className="block text-lg font-light text-gray-700 p-2">Price Range:</label>
+              <div className="flex flex-col">
+                <input
+                  type="range"
+                  name="minPrice"
+                  min={PRICE_RANGE.min}
+                  max={PRICE_RANGE.max}
+                  value={filter.minPrice}
+                  onChange={handleSliderChange}
+                  className="w-full"
+                />
+                <input
+                  type="range"
+                  name="maxPrice"
+                  min={filter.minPrice}
+                  max={PRICE_RANGE.max}
+                  value={filter.maxPrice}
+                  onChange={handleSliderChange}
+                  className="w-full"
+                />
+              </div>
+              <div className="flex justify-between text-sm mt-2">
+                <span>Min: {filter.minPrice}</span>
+                <span>Max: {filter.maxPrice}</span>
+              </div>
             </div>
-          </div>
-          <hr className="border-slate-500" />
-          <div>
-            <label className="block text-lg font-light text-gray-700 p-2">Sellers:</label>
-            <div className="flex flex-wrap px-2">
-              {sellers.map(seller => (
-                <label key={seller} className="inline-flex items-center pr-2">
-                  <input
-                    type="checkbox"
-                    checked={filter.selectedSellers.includes(seller)}
-                    onChange={() => handleSellerSelection(seller)}
-                    className="form-checkbox"
-                  />
-                  <span className="ml-2 font-light">{seller}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-          <hr className="border-slate-500" />
-          <div>
-            <label className="block text-lg font-light text-gray-700 p-2">Categories:</label>
-            <div className="flex flex-wrap px-2">
-              {categories.map(category => (
-                <label key={category} className="inline-flex items-center pr-2">
-                  <input
-                    type="checkbox"
-                    checked={filter.selectedCategories.includes(category)}
-                    onChange={() => handleCategorySelection(category)}
-                    className="form-checkbox"
-                  />
-                  <span className="ml-2 font-light">{category}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-          <hr className="border-slate-500" />
-          <div>
-            <label className="inline-flex items-center mt-2">
-              <input
-                type="checkbox"
-                checked={filter.hideOutOfStock}
-                onChange={(e) => setFilter({ ...filter, hideOutOfStock: e.target.checked })}
-                className="form-checkbox"
-              />
-              <span className="ml-2 font-light">Hide Out of Stock</span>
-            </label>
-          </div>
-          <div className="flex justify-center items-center">
-            <button onClick={applyFilter} className="bg-primaryDarkColor hover:bg-primaryLightColor text-white px-4 py-2 mt-4 rounded-md w-full flex items-center justify-center space-x-2">
-              <FcFilledFilter size={25} />
-              <span>Filter</span>
-            </button>
-          </div>
-          <div className="flex justify-center items-center">
-            <button onClick={clearFilter} className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 b-8 mt-2 mb-8 rounded-md w-full flex items-center justify-center space-x-2">
-              <FcClearFilters size={25} />
-              <span>Clear Filter</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Content Section */}
-      <div className="w-full md:w-4/4 ml-4 px-4 mt-24 md:mt-24">
-        <div className="flex justify-end ">
-          <button
-            onClick={() => setViewMode('grid')}
-            className={`px-4 py-2 mr-2 rounded-md ${viewMode === 'grid' ? 'bg-primaryDarkColor text-white' : 'bg-slate-400'}`}
-          >
-            <MdGridView />
-          </button>
-          <button
-            onClick={() => setViewMode('compact')}
-            className={`px-4 py-2 rounded-md ${viewMode === 'compact' ? 'bg-primaryDarkColor text-white' : 'bg-slate-400'}`}
-          >
-            <MdOutlineViewAgenda />
-          </button>
-        </div>
-        {paginatedProducts.length === 0 ? (
-          <div className="rounded-md bg-slate-200 bg-opacity-50 flex justify-center items-center text-center text-lg font-bold text-gray-700">
-            No products available :(
-          </div>
-        ) : (
-          <><div className="min-h-screen bg-white bg-opacity-80 rounded-md shadow-md">
-            <div className={`grid gap-8 my-4 px-16 py-4  ${viewMode === 'grid' ? 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'}`}>
-              {paginatedProducts.map((product, productIndex) => (
-                <div
-                  key={product.id}
-                  className={`max-h-[320px] border bg-white bg-opacity-80 rounded-md shadow-md overflow-hidden ${viewMode === 'grid' ? 'w-full max-w-xs' : 'w-full max-w-lg'} hover:border hover:shadow-gray-500 hover:shadow-lg`}
-                >
-                  <div className="relative w-full h-40">
-                    {product.productImageUrls?.length > 0 && (
-                      <div className="relative p-4 w-full h-full">
-                        <img
-                          src={product.productImageUrls[currentImageIndexes[productIndex]]}
-                          alt={product.productName}
-                          className="object-contain w-full h-full"
-                        />
-                        {product.productImageUrls.length > 1 && (
-                          <>
-                            <button
-                              onClick={() => handlePrevImage(productIndex)}
-                              className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-gray-700 bg-opacity-50 text-white p-1 text-xs rounded-full"
-                            >
-                              &lt;
-                            </button>
-                            <button
-                              onClick={() => handleNextImage(productIndex)}
-                              className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-gray-700 bg-opacity-50 text-white p-1 text-xs rounded-full"
-                            >
-                              &gt;
-                            </button>
-                          </>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                  <div className="p-2 flex flex-col justify-between h-40">
-                    <div className="text-gray-700 font-semibold text-sm truncate">{product.productName}</div>
-                    {product.discountedPrice ? (
-                      <div className="flex items-center space-x-1 pt-1">
-                        <p className="text-xs text-gray-500 line-through">${product.price}</p>
-                        <p className="text-red-600 font-medium text-sm">${product.discountedPrice}</p>
-                      </div>
-                    ) : (
-                      <p className="text-red-600 font-medium text-sm pt-1">${product.price}</p>
-                    )}
-                    <div className="text-gray-500 text-xs pt-1 truncate">Sold by: {product.sellerInfo}</div>
-                    <div className={`text-xs ${product.stockCount > 0 ? 'text-green-600' : 'text-red-600'} pt-1`}>
-                      {product.stockCount > 0 ? `In Stock (${product.stockCount})` : 'Out of Stock'}
-                    </div>
-                    <button
-                      onClick={() => (window.location.href = `/product-detail/${product.id}`)}
-                      className="bg-transparent border border-black hover:bg-gray-500 hover:text-white text-black hover:border-none justify-center py-1 mt-2 rounded-md mx-4 text-xs"
-                    >
-                      Details
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-
-
-            <div className="flex justify-center items-center space-x-2 mt-4">
-              <button
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-                className={`px-4 py-2 bg-gray-500 rounded-md ${currentPage === 1 ? 'cursor-not-allowed opacity-50' : ''}`}
-              >
-                Previous
-              </button>
-
-              <div className="flex items-center">
-                {Array.from({ length: totalPages }, (_, index) => (
-                  <button
-                    key={index + 1}
-                    onClick={() => handlePageChange(index + 1)}
-                    className={`px-2 py-1 mx-1 rounded-full ${currentPage === index + 1 ? 'bg-primaryDarkColor text-white' : 'bg-gray-200'
-                      }`}
-                  >
-                    {index + 1}
-                  </button>
+            <hr className="mt-4 border-slate-500" />
+            <div>
+              <label className="block text-md font-bold text-gray-700 p-2">Sellers</label>
+              <div className="flex flex-col p-2">
+                {sellers.map(seller => (
+                  <label key={seller} className="inline-flex items-center pr-2">
+                    <input
+                      type="checkbox"
+                      checked={filter.selectedSellers.includes(seller)}
+                      onChange={() => handleSellerSelection(seller)}
+                      className="form-checkbox "
+                    />
+                    <span className="ml-2 font-light">{seller}</span>
+                  </label>
                 ))}
               </div>
-
-              <button
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage === totalPages}
-                className={`px-4 py-2 bg-gray-500 rounded-md ${currentPage === totalPages ? 'cursor-not-allowed opacity-50' : ''}`}
-              >
-                Next
+            </div>
+            <hr className="border-slate-500" />
+            <div>
+              <label className="block text-md font-bold text-gray-700 p-2">Categories</label>
+              <div className="flex flex-col p-2">
+                {categories.map(category => (
+                  <label key={category} className="inline-flex items-center pr-2">
+                    <input
+                      type="checkbox"
+                      checked={filter.selectedCategories.includes(category)}
+                      onChange={() => handleCategorySelection(category)}
+                      className="form-checkbox"
+                    />
+                    <span className="ml-2 font-light">{category}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+            <hr className="border-slate-500" />
+            <div>
+              <label className="inline-flex items-center mt-2">
+                <input
+                  type="checkbox"
+                  checked={filter.hideOutOfStock}
+                  onChange={(e) => setFilter({ ...filter, hideOutOfStock: e.target.checked })}
+                  className="form-checkbox"
+                />
+                <span className="ml-2 font-bold text-gray-700 font-quicksand">Hide Out of Stock</span>
+              </label>
+            </div>
+            <div className="flex justify-center items-center">
+              <button onClick={applyFilter} className="btn bg-primaryDarkColor hover:bg-primaryLightColor text-white px-4 py-2 mt-4 rounded-md w-full flex items-center justify-center space-x-2">
+                <FcFilledFilter size={25} />
+                <span>Filter</span>
               </button>
             </div>
-          </>
-        )}
-      </div>
+            <div className="flex justify-center items-center">
+              <button onClick={clearFilter} className="btn bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 mt-2 mb-8 rounded-md w-full flex items-center justify-center space-x-2">
+                <FcClearFilters size={25} />
+                <span>Clear Filter</span>
+              </button>
+            </div>
+          </div>
+        </ScrollArea>
 
-    </div>
+      </div >
+
+      {/* Content Section */}
+      <div className="w-full md:w-4/4 ml-4 px-4 mt-20 md:mt-16" >
+
+        {
+          paginatedProducts.length === 0 ? (
+            <div className="rounded-md bg-slate-200 bg-opacity-50 flex justify-center items-center text-center text-lg font-bold text-gray-700">
+              No products available :(
+            </div>
+          ) : (
+            <><div className="min-h-screen ">
+              <div className="flex justify-end py-3 pr-4">
+                <button
+                  onClick={() => setViewMode('grid')}
+                  className={`btn px-4 py-2 mr-2 rounded-md ${viewMode === 'grid' ? 'bg-primaryDarkColor text-white' : 'bg-slate-400'}`}
+                >
+                  <MdGridView />
+                </button>
+                <button
+                  onClick={() => setViewMode('compact')}
+                  className={`btn px-4 py-2 rounded-md ${viewMode === 'compact' ? 'bg-primaryDarkColor text-white' : 'bg-slate-400'}`}
+                >
+                  <MdOutlineViewAgenda />
+                </button>
+              </div>
+              <div className={`grid gap-10 px-4 pb-8 mt-4 md:m-0  ${viewMode === 'grid' ? 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'}`}>
+                {paginatedProducts.map((product, productIndex) => (
+                  <div
+                    key={product.id}
+                    className={`max-h-[320px] border bg-white bg-opacity-80 rounded-md shadow-md overflow-hidden ${viewMode === 'grid' ? 'w-full max-w-xs' : 'w-full max-w-lg'} hover:border hover:shadow-gray-500 hover:shadow-lg`}
+                  >
+                    <div className="relative w-full h-40">
+                      {product.productImageUrls?.length > 0 && (
+                        <div className="relative p-4 w-full h-full">
+                          <img
+                            src={product.productImageUrls[currentImageIndexes[productIndex]]}
+                            alt={product.productName}
+                            className="object-contain w-full h-full"
+                          />
+                          {product.productImageUrls.length > 1 && (
+                            <>
+                              <button
+                                onClick={() => handlePrevImage(productIndex)}
+                                className="btn absolute left-2 top-1/2 transform -translate-y-1/2 bg-gray-700 bg-opacity-50 text-white p-1 text-xs rounded-full"
+                              >
+                                &lt;
+                              </button>
+                              <button
+                                onClick={() => handleNextImage(productIndex)}
+                                className="btn absolute right-2 top-1/2 transform -translate-y-1/2 bg-gray-700 bg-opacity-50 text-white p-1 text-xs rounded-full"
+                              >
+                                &gt;
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                    <div className="p-2 flex flex-col justify-between h-40">
+                      <div className="text-gray-700 font-semibold text-sm truncate">{product.productName}</div>
+                      {product.discountedPrice ? (
+                        <div className="flex items-center space-x-1 pt-1">
+                          <p className="text-xs text-gray-500 line-through">${product.price}</p>
+                          <p className="text-red-600 font-medium text-sm">${product.discountedPrice}</p>
+                        </div>
+                      ) : (
+                        <p className="text-red-600 font-medium text-sm pt-1">${product.price}</p>
+                      )}
+                      <div className="text-gray-500 text-xs pt-1 truncate">Sold by: {product.sellerInfo}</div>
+                      <div className={`text-xs ${product.stockCount > 0 ? 'text-green-600' : 'text-red-600'} pt-1`}>
+                        {product.stockCount > 0 ? `In Stock (${product.stockCount})` : 'Out of Stock'}
+                      </div>
+                      <button
+                        onClick={() => (window.location.href = `/product-detail/${product.id}`)}
+                        className="btn bg-transparent border border-black hover:bg-gray-500 hover:text-white text-black hover:border-none justify-center py-1 mt-2 rounded-md mx-4 text-xs"
+                      >
+                        Details
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+
+
+              <div className="flex justify-center items-center space-x-2 mt-4">
+                <button
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className={`btn px-4 py-2 bg-gray-500 rounded-md ${currentPage === 1 ? 'cursor-not-allowed opacity-50' : ''}`}
+                >
+                  Previous
+                </button>
+
+                <div className="flex items-center">
+                  {Array.from({ length: totalPages }, (_, index) => (
+                    <button
+                      key={index + 1}
+                      onClick={() => handlePageChange(index + 1)}
+                      className={`btn px-2 py-1 mx-1 rounded-full ${currentPage === index + 1 ? 'bg-primaryDarkColor text-white' : 'bg-gray-200'
+                        }`}
+                    >
+                      {index + 1}
+                    </button>
+                  ))}
+                </div>
+
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className={`btn px-4 py-2 bg-gray-500 rounded-md ${currentPage === totalPages ? 'cursor-not-allowed opacity-50' : ''}`}
+                >
+                  Next
+                </button>
+              </div>
+            </>
+          )
+        }
+      </div >
+
+    </div >
   );
 
 

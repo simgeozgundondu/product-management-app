@@ -1,7 +1,9 @@
 "use client";
+
 import { useRef, useState, useEffect } from "react";
 import { AiOutlineClose } from "react-icons/ai";
 import IMask from "imask";
+
 
 interface FormErrors {
   productName?: string;
@@ -67,10 +69,20 @@ const AddProduct = () => {
 
   const handleAddImageUrl = () => {
     if (imageUrl) {
-      setProductImageUrls((prevUrls) => [...prevUrls, imageUrl]);
-      setImageUrl("");
+      const img = new Image();
+      img.src = imageUrl;
+
+      img.onload = () => {
+        setProductImageUrls((prevUrls) => [...prevUrls, imageUrl]);
+        setImageUrl("");
+      };
+
+      img.onerror = () => {
+        alert("Error: The provided URL does not lead to a valid image.");
+      };
     }
   };
+
 
   const handleRemoveImage = (index: number) => {
     setProductImageUrls((prevUrls) =>
@@ -246,7 +258,7 @@ const AddProduct = () => {
                 <button
                   type="button"
                   onClick={handleAddImageUrl}
-                  className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
+                  className="btn bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
                 >
                   Add Image
                 </button>
@@ -257,7 +269,7 @@ const AddProduct = () => {
                 {productImageUrls.map((url, index) => (
                   <div
                     key={index}
-                    className="flex items-center gap-2 bg-gray-200 p-2 rounded-md"
+                    className="relative w-24 flex items-center gap-2 bg-gray-200 p-2 rounded-md"
                   >
                     <img
                       src={url}
@@ -267,19 +279,20 @@ const AddProduct = () => {
                     <button
                       type="button"
                       onClick={() => handleRemoveImage(index)}
-                      className="text-red-500 hover:text-red-700"
+                      className="absolute top-0 right-0 p-1 bg-red-500 text-white rounded-full hover:bg-red-700"
                     >
-                      <AiOutlineClose size={20} />
+                      <AiOutlineClose size={16} />
                     </button>
                   </div>
                 ))}
               </div>
             )}
+
           </div>
 
           <button
             type="submit"
-            className="bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 w-full mt-4"
+            className="btn bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 w-full mt-4"
           >
             Add Product
           </button>

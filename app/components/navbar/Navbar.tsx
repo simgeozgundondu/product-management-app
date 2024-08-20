@@ -14,7 +14,7 @@ const Navbar = () => {
 
     return (
         <div className="fixed top-0 left-0 w-full z-50">
-            <div className="bg-transparent bg-opacity-50 bg-slate-100 border-b border-slate-600 backdrop-blur-sm backdrop-filter flex items-center justify-between gap-3 md:gap-10 md:px-10 h-24 text-slate-100">
+            <div className="h-[80px] bg-transparent bg-white border-b border-slate-600 backdrop-blur-sm backdrop-filter flex items-center justify-between gap-3 md:gap-10 md:px-10 text-slate-100">
                 <Logo />
                 <Search />
                 <HamburgerMenu onClick={toggleSidebar} />
