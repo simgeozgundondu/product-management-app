@@ -145,24 +145,6 @@ const ProductList = () => {
     }));
   };
 
-  const handleNextImage = (productIndex: number) => {
-    setCurrentImageIndexes((prevIndexes) => {
-      const newIndexes = [...prevIndexes];
-      newIndexes[productIndex] = (prevIndexes[productIndex] + 1) % products[productIndex].productImageUrls.length;
-      return newIndexes;
-    });
-  };
-
-  const handlePrevImage = (productIndex: number) => {
-    setCurrentImageIndexes((prevIndexes) => {
-      const newIndexes = [...prevIndexes];
-      newIndexes[productIndex] = prevIndexes[productIndex] === 0
-        ? products[productIndex].productImageUrls.length - 1
-        : prevIndexes[productIndex] - 1;
-      return newIndexes;
-    });
-  };
-
   const handleCloseSidebar = () => {
     setIsSidebarOpen(false);
   };
@@ -170,6 +152,26 @@ const ProductList = () => {
 
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
+
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement, MouseEvent>, index: number) => {
+    const imageCount = paginatedProducts[index].productImageUrls.length;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const imageIndex = Math.floor((x / rect.width) * imageCount);
+
+    setCurrentImageIndexes((prevState) => ({
+      ...prevState,
+      [index]: imageIndex,
+    }));
+
+    setHoveredIndex(index);
+  };
+
+  const handleMouseLeave = () => {
+    setHoveredIndex(null);
+  };
 
 
   return (
@@ -405,31 +407,17 @@ const ProductList = () => {
                   <div
                     key={product.id}
                     className={`max-h-[320px] border bg-white bg-opacity-80 rounded-md shadow-md overflow-hidden ${viewMode === 'grid' ? 'w-full max-w-xs' : 'w-full max-w-lg'} hover:border hover:shadow-gray-500 hover:shadow-lg`}
+                    onMouseMove={(e) => handleMouseMove(e, productIndex)}
+                    onMouseLeave={handleMouseLeave}
                   >
                     <div className="relative w-full h-40">
                       {product.productImageUrls?.length > 0 && (
                         <div className="relative p-4 w-full h-full">
                           <img
-                            src={product.productImageUrls[currentImageIndexes[productIndex]]}
+                            src={product.productImageUrls[hoveredIndex === productIndex ? currentImageIndexes[productIndex] ?? 0 : 0]}
                             alt={product.productName}
                             className="object-contain w-full h-full"
                           />
-                          {product.productImageUrls.length > 1 && (
-                            <>
-                              <button
-                                onClick={() => handlePrevImage(productIndex)}
-                                className="btn absolute left-2 top-1/2 transform -translate-y-1/2 bg-gray-700 bg-opacity-50 text-white p-1 text-xs rounded-full"
-                              >
-                                &lt;
-                              </button>
-                              <button
-                                onClick={() => handleNextImage(productIndex)}
-                                className="btn absolute right-2 top-1/2 transform -translate-y-1/2 bg-gray-700 bg-opacity-50 text-white p-1 text-xs rounded-full"
-                              >
-                                &gt;
-                              </button>
-                            </>
-                          )}
                         </div>
                       )}
                     </div>
