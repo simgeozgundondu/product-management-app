@@ -180,7 +180,7 @@ const ProductList = () => {
       <div className="absolute mt-20 py-3 left-4 z-10 md:hidden">
         <button
           onClick={handleOpenModal}
-          className="btn flex justify-start ml-10 bg-slate-400 hover:bg-primaryDarkColor text-white px-2 py-2 rounded-md items-center space-x-2"
+          className="btn flex justify-start ml-10 bg-slate-400 hover:bg-primaryDarkColor text-white px-2 py-2 rounded-md items-center space-x-2 transition-transform duration-500 ease-in-out"
         >
           <FcFilledFilter size={25} />
           <span>Filter</span>
@@ -190,7 +190,7 @@ const ProductList = () => {
       {isModalOpen && (
         <div className="fixed inset-0 bg-white border rounded-md shadow-lg z-50 overflow-auto p-4">
           <div className="relative p-4 w-auto mx-auto h-screen ">
-            <button onClick={handleCloseModal} className="btn absolute top-2 right-2 text-2xl  bg-transparent text-primaryDarkColor">
+            <button onClick={handleCloseModal} className="btn absolute top-2 right-2 text-2xl  bg-transparent text-primaryDarkColor transition-transform duration-500 ease-in-out">
               ✕
             </button>
 
@@ -391,13 +391,13 @@ const ProductList = () => {
               <div className="flex justify-end py-3 pr-4">
                 <button
                   onClick={() => setViewMode('grid')}
-                  className={`btn px-4 py-2 mr-2 rounded-md ${viewMode === 'grid' ? 'bg-primaryDarkColor text-white' : 'bg-slate-400'}`}
+                  className={`btn px-4 py-2 mr-2 rounded-md ${viewMode === 'grid' ? 'bg-primaryDarkColor text-white' : 'bg-gray-300'} transition-transform duration-500 ease-in-out`}
                 >
                   <MdGridView />
                 </button>
                 <button
                   onClick={() => setViewMode('compact')}
-                  className={`btn px-4 py-2 rounded-md ${viewMode === 'compact' ? 'bg-primaryDarkColor text-white' : 'bg-slate-400'}`}
+                  className={`btn px-4 py-2 rounded-md ${viewMode === 'compact' ? 'bg-primaryDarkColor text-white' : 'bg-gray-300'} transition-transform duration-500 ease-in-out`}
                 >
                   <MdOutlineViewAgenda />
                 </button>
@@ -453,7 +453,7 @@ const ProductList = () => {
                 <button
                   onClick={() => handlePageChange(currentPage - 1)}
                   disabled={currentPage === 1}
-                  className={`btn px-4 py-2 bg-gray-500 rounded-md ${currentPage === 1 ? 'cursor-not-allowed opacity-50' : ''}`}
+                  className={`btn px-4 py-2 bg-gray-400 rounded-md ${currentPage === 1 ? 'cursor-not-allowed opacity-50' : ''}`}
                 >
                   Previous
                 </button>
@@ -474,7 +474,7 @@ const ProductList = () => {
                 <button
                   onClick={() => handlePageChange(currentPage + 1)}
                   disabled={currentPage === totalPages}
-                  className={`btn px-4 py-2 bg-gray-500 rounded-md ${currentPage === totalPages ? 'cursor-not-allowed opacity-50' : ''}`}
+                  className={`btn px-4 py-2 bg-gray-400 rounded-md ${currentPage === totalPages ? 'cursor-not-allowed opacity-50' : ''}`}
                 >
                   Next
                 </button>
