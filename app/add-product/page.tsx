@@ -68,20 +68,27 @@ const AddProduct = () => {
   }, []);
 
   const handleAddImageUrl = () => {
-    if (imageUrl) {
-      const img = new Image();
-      img.src = imageUrl;
+    const maxImages = 3;
+    if (!imageUrl) return;
+    const currentImageCount = productImageUrls.length;
 
-      img.onload = () => {
-        setProductImageUrls((prevUrls) => [...prevUrls, imageUrl]);
-        setImageUrl("");
-      };
-
-      img.onerror = () => {
-        alert("Error: The provided URL does not lead to a valid image.");
-      };
+    if (currentImageCount >= maxImages) {
+      alert("You can only add up to 3 images.");
+      return;
     }
+    const img = new Image();
+    img.src = imageUrl;
+
+    img.onload = () => {
+      setProductImageUrls((prevUrls) => [...prevUrls, imageUrl]);
+      setImageUrl("");
+    };
+
+    img.onerror = () => {
+      alert("Error: The provided URL does not lead to a valid image.");
+    };
   };
+
 
 
   const handleRemoveImage = (index: number) => {
@@ -263,30 +270,30 @@ const AddProduct = () => {
                   Add Image
                 </button>
               </div>
-            </div>
-            {productImageUrls.length > 0 && (
-              <div className="mt-2 space-y-2">
-                {productImageUrls.map((url, index) => (
-                  <div
-                    key={index}
-                    className="relative w-24 flex items-center gap-2 bg-gray-200 p-2 rounded-md"
-                  >
-                    <img
-                      src={url}
-                      alt={`Product Image ${index + 1}`}
-                      className="w-16 h-16 object-cover rounded-md"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveImage(index)}
-                      className="absolute top-0 right-0 p-1 bg-red-500 text-white rounded-full hover:bg-red-700"
+              {productImageUrls.length > 0 && (
+                <div className="mt-3 flex">
+                  {productImageUrls.map((url, index) => (
+                    <div
+                      key={index}
+                      className="relative w-24 flex items-center gap-2 p-2 rounded-md"
                     >
-                      <AiOutlineClose size={16} />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
+                      <img
+                        src={url}
+                        alt={`Product Image ${index + 1}`}
+                        className="w-20 h-20 object-cover rounded-md"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveImage(index)}
+                        className="absolute top-0 right-0 p-1 bg-red-500 text-white rounded-full hover:bg-red-700"
+                      >
+                        <AiOutlineClose size={16} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
 
           </div>
 
