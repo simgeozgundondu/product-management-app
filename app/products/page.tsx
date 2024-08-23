@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { FcClearFilters, FcFilledFilter } from "react-icons/fc";
+import { FcClearFilters, FcEmptyFilter, FcFilledFilter } from "react-icons/fc";
 import { MdGridView, MdOutlineViewAgenda } from "react-icons/md";
 import { ScrollArea } from "@/components/ui/scroll-area"
 
@@ -269,7 +269,7 @@ const ProductList = () => {
                 </label>
               </div>
               <div className="flex justify-center items-center space-x-2">
-                <button onClick={applyFilter} className="btn bg-primaryDarkColor hover:bg-primaryLightColor text-white px-4 rounded-md flex items-center space-x-2">
+                <button onClick={applyFilter} className="btn bg-primaryLightColor hover:bg-primaryDarkColor text-white px-4 mb-4 rounded-md flex items-center space-x-2">
                   <FcFilledFilter size={25} />
                   <span>Filter</span>
                 </button>
@@ -362,13 +362,13 @@ const ProductList = () => {
               </label>
             </div>
             <div className="flex justify-center items-center">
-              <button onClick={applyFilter} className="btn bg-primaryDarkColor hover:bg-primaryLightColor text-white px-4 py-2 mt-4 rounded-md w-full flex items-center justify-center space-x-2">
-                <FcFilledFilter size={25} />
+              <button onClick={applyFilter} className="bg-secondaryLightColor hover:bg-secondaryDarkColor text-black px-4 py-2 mt-4 rounded-md w-full flex items-center justify-center space-x-2">
+                <FcFilledFilter  size={25} />
                 <span>Filter</span>
               </button>
             </div>
             <div className="flex justify-center items-center">
-              <button onClick={clearFilter} className="btn bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 mt-2 mb-8 rounded-md w-full flex items-center justify-center space-x-2">
+              <button onClick={clearFilter} className=" bg-primaryLightColor hover:bg-primaryDarkColor text-white px-4 py-2 mt-2 mb-8 rounded-md w-full flex items-center justify-center space-x-2">
                 <FcClearFilters size={25} />
                 <span>Clear Filter</span>
               </button>
@@ -437,7 +437,7 @@ const ProductList = () => {
                       </div>
                       <button
                         onClick={() => (window.location.href = `/product-detail/${product.id}`)}
-                        className="btn bg-transparent border border-black hover:bg-gray-500 hover:text-white text-black hover:border-none justify-center py-1 mt-2 rounded-md mx-4 text-xs"
+                        className="btn bg-transparent border border-primaryDarkColor hover:bg-primaryDarkColor hover:text-white text-black hover:border-none justify-center py-1 mt-2 rounded-md mx-4 text-xs"
                       >
                         Details
                       </button>
@@ -463,7 +463,7 @@ const ProductList = () => {
                     <button
                       key={index + 1}
                       onClick={() => handlePageChange(index + 1)}
-                      className={`btn px-2 py-1 mx-1 rounded-full ${currentPage === index + 1 ? 'bg-primaryDarkColor text-white' : 'bg-gray-200'
+                      className={`btn px-2 py-1 mx-1 rounded-full ${currentPage === index + 1 ? 'bg-primaryLightColor text-white' : 'bg-gray-200'
                         }`}
                     >
                       {index + 1}

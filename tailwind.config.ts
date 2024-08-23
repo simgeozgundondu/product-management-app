@@ -1,3 +1,4 @@
+import { Component } from "lucide-react"
 import type { Config } from "tailwindcss"
 
 const config = {
@@ -24,10 +25,10 @@ const config = {
       },
       colors: {
         customBackground: '#f4f4ed',
-        primaryDarkColor:'#0284c7',
-        primaryLightColor:'#93c5fd',
-        secondaryLightColor :'#fb571a',
-        secondaryDarkColor : '#fc9067',
+        primaryDarkColor:'#465C7F',
+        primaryLightColor:'#6B8EC6',
+        secondaryLightColor :'#E5C5AF',
+        secondaryDarkColor : '#DBA291',
         lightColor :'#F8F7FF',
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -86,5 +87,6 @@ const config = {
   },
   plugins: [require("tailwindcss-animate")],
 } satisfies Config
+
 
 export default config

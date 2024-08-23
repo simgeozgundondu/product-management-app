@@ -12,15 +12,15 @@ const Sidebar = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) 
                 <button onClick={onClose} className="pt-4 pr-8 text-3xl">✕</button>
             </div>
             <div className="flex flex-col text-center p-4 space-y-4">
-                <Link href="/" className="flex items-center space-x-2 font-reenie text-xl text-white p-4 hover:border hover:border-s-slate-600 hover:rounded-lg hover:bg-slate-300 hover:bg-opacity-50" onClick={onClose}>
+                <Link href="/" className="flex items-center space-x-2 font-reenie text-4xl text-white p-4 hover:border hover:border-s-slate-600 hover:rounded-lg hover:bg-slate-300 hover:bg-opacity-50" onClick={onClose}>
                     <FaHome className="text-xl" />
                     <span>Home</span>
                 </Link>
-                <Link href="/add-product" className="flex items-center space-x-2 font-reenie text-xl text-white p-4 hover:border hover:border-s-slate-600 hover:rounded-lg hover:bg-slate-300 hover:bg-opacity-50" onClick={onClose}>
+                <Link href="/add-product" className="flex items-center space-x-2 font-reenie text-4xl text-white p-4 hover:border hover:border-s-slate-600 hover:rounded-lg hover:bg-slate-300 hover:bg-opacity-50" onClick={onClose}>
                     <FaPlus className="text-xl" />
                     <span>Add Product</span>
                 </Link>
-                <Link href="/products" className="flex items-center space-x-2 font-reenie text-xl text-white p-4 hover:border hover:border-s-slate-600 hover:rounded-lg hover:bg-slate-300 hover:bg-opacity-50" onClick={onClose}>
+                <Link href="/products" className="flex items-center space-x-2 font-reenie text-4xl text-white p-4 hover:border hover:border-s-slate-600 hover:rounded-lg hover:bg-slate-300 hover:bg-opacity-50" onClick={onClose}>
                     <FaList className="text-xl" />
                     <span>All Products</span>
                 </Link>

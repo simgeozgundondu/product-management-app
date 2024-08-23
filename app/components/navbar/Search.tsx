@@ -43,9 +43,9 @@ const Search = () => {
 
     useEffect(() => {
         if (dropdownRef.current && activeIndex >= 0 && isDropdownOpen) {
-            const activeItem = dropdownRef.current.children[activeIndex] as HTMLElement;
+            const activeItem = dropdownRef.current.querySelectorAll('li')[activeIndex] as HTMLElement;
             if (activeItem) {
-                activeItem.scrollIntoView({ block: 'nearest' });
+                activeItem.scrollIntoView({ block: 'nearest', behavior:'smooth' });
             }
         }
     }, [activeIndex, isDropdownOpen]);
