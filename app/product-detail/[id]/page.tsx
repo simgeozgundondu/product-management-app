@@ -1,20 +1,12 @@
 "use client";
 
+import { Product } from '@/app/interfaces/product';
 import { Dialog, DialogClose, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 
-interface Product {
-  id: number;
-  productName: string;
-  sellerInfo: string;
-  stockCount: number;
-  price: number;
-  discountedPrice?: number;
-  category: string;
-  productImageUrls: string[];
-}
+
 
 const ProductDetail = () => {
   const params = useParams();

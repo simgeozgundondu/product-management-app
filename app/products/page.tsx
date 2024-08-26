@@ -3,6 +3,10 @@ import { useEffect, useState } from "react";
 import { FcClearFilters, FcEmptyFilter, FcFilledFilter } from "react-icons/fc";
 import { MdGridView, MdOutlineViewAgenda } from "react-icons/md";
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { Product } from "../interfaces/product";
+import ProductCard from "../components/ProductCard";
+import MobileFilterSection from "../components/filtering/MobileFilterSection";
+import FilterSection from "../components/filtering/FilterSection";
 
 
 
@@ -11,17 +15,6 @@ const PRICE_RANGE = {
   min: 0,
   max: 1000,
 };
-
-interface Product {
-  id: number;
-  productName: string;
-  sellerInfo: string;
-  stockCount: number;
-  price: number;
-  discountedPrice?: number;
-  category: string;
-  productImageUrls: string[];
-}
 
 const ProductList = () => {
   const [products, setProducts] = useState<Product[]>(() => {
@@ -53,6 +46,8 @@ const ProductList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [viewMode, setViewMode] = useState<'grid' | 'compact'>('grid');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+
 
   useEffect(() => {
     const uniqueSellers = Array.from(new Set(products.map(p => p.sellerInfo)));
@@ -153,8 +148,7 @@ const ProductList = () => {
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
 
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  
+
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement, MouseEvent>, index: number) => {
     const imageCount = paginatedProducts[index].productImageUrls.length;
     const rect = e.currentTarget.getBoundingClientRect();
@@ -187,196 +181,32 @@ const ProductList = () => {
         </button>
       </div>
       {/*  filtering on mobile */}
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-white border rounded-md shadow-lg z-50 overflow-auto p-4">
-          <div className="relative p-4 w-auto mx-auto h-screen ">
-            <button onClick={handleCloseModal} className="btn absolute top-2 right-2 text-2xl  bg-transparent text-primaryDarkColor transition-transform duration-500 ease-in-out">
-              ✕
-            </button>
+      <MobileFilterSection
+        filter={filter}
+        sellers={sellers}
+        categories={categories}
+        handleSliderChange={handleSliderChange}
+        handleSellerSelection={handleSellerSelection}
+        handleCategorySelection={handleCategorySelection}
+        applyFilter={applyFilter}
+        clearFilter={clearFilter}
+        isModalOpen={isModalOpen}
+        handleCloseModal={handleCloseModal}
+        setFilter={setFilter}
+      />
+      <FilterSection
+        filter={filter}
+        sellers={sellers}
+        categories={categories}
+        handleSliderChange={handleSliderChange}
+        handleSellerSelection={handleSellerSelection}
+        handleCategorySelection={handleCategorySelection}
+        applyFilter={applyFilter}
+        clearFilter={clearFilter}
+        handleCloseSidebar ={handleCloseSidebar}
+        setFilter={setFilter}
+      />
 
-            <div className="space-y-4 py-8">
-              <div>
-                <label className="block text-lg font-light text-gray-700 p-4 pt-2">Price Range:</label>
-                <div className="flex flex-col">
-                  <input
-                    type="range"
-                    name="minPrice"
-                    min={PRICE_RANGE.min}
-                    max={PRICE_RANGE.max}
-                    value={filter.minPrice}
-                    onChange={handleSliderChange}
-                    className="w-full"
-                  />
-                  <input
-                    type="range"
-                    name="maxPrice"
-                    min={filter.minPrice}
-                    max={PRICE_RANGE.max}
-                    value={filter.maxPrice}
-                    onChange={handleSliderChange}
-                    className="w-full"
-                  />
-                </div>
-                <div className="flex justify-between text-sm my-2">
-                  <span>Min: {filter.minPrice}</span>
-                  <span>Max: {filter.maxPrice}</span>
-                </div>
-              </div>
-              <hr className="border-slate-500" />
-              <div>
-                <label className="block text-lg font-bold text-gray-700 p-2">Sellers</label>
-                <div className="flex flex-col px-2">
-                  {sellers.map(seller => (
-                    <label key={seller} className="inline-flex items-center pr-2">
-                      <input
-                        type="checkbox"
-                        checked={filter.selectedSellers.includes(seller)}
-                        onChange={() => handleSellerSelection(seller)}
-                        className="form-checkbox"
-                      />
-                      <span className="ml-2 font-light">{seller}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-              <hr className="border-slate-500" />
-              <div>
-                <label className="block text-lg font-bold text-gray-700 p-2">Categories</label>
-                <div className="flex flex-col px-2">
-                  {categories.map(category => (
-                    <label key={category} className="inline-flex items-center pr-2">
-                      <input
-                        type="checkbox"
-                        checked={filter.selectedCategories.includes(category)}
-                        onChange={() => handleCategorySelection(category)}
-                        className="form-checkbox"
-                      />
-                      <span className="ml-2 font-light">{category}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-              <hr className="border-slate-500" />
-              <div>
-                <label className="inline-flex items-center mt-2">
-                  <input
-                    type="checkbox"
-                    checked={filter.hideOutOfStock}
-                    onChange={(e) => setFilter({ ...filter, hideOutOfStock: e.target.checked })}
-                    className="form-checkbox"
-                  />
-                  <span className="ml-2 font-light">Hide Out of Stock</span>
-                </label>
-              </div>
-              <div className="flex justify-center items-center space-x-2">
-                <button onClick={applyFilter} className="btn bg-primaryLightColor hover:bg-primaryDarkColor text-white px-4 mb-4 rounded-md flex items-center space-x-2">
-                  <FcFilledFilter size={25} />
-                  <span>Filter</span>
-                </button>
-                <button onClick={clearFilter} className="btn bg-gray-500 hover:bg-gray-600 text-white px-4 mb-4 py-2 rounded-md flex items-center space-x-2 ">
-                  <FcClearFilters size={25} />
-                  <span>Clear Filter</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-      <div className="hidden md:flex md:w-1/4 pl-2 top-24 h-screen bg-white bg-opacity-80 border-r rounded-md sticky">
-        <ScrollArea className="h-full w-full rounded-md border p-4">
-          <div className="space-y-4">
-            <div className="flex justify-end">
-              <button onClick={handleCloseSidebar} className="btn pt-1 pr-4 text-lg bg-transparent text-primaryDarkColor md:hidden">✕</button>
-            </div>
-            <div>
-              <label className="block text-lg font-light text-gray-700 p-2">Price Range:</label>
-              <div className="flex flex-col">
-                <input
-                  type="range"
-                  name="minPrice"
-                  min={PRICE_RANGE.min}
-                  max={PRICE_RANGE.max}
-                  value={filter.minPrice}
-                  onChange={handleSliderChange}
-                  className="w-full"
-                />
-                <input
-                  type="range"
-                  name="maxPrice"
-                  min={filter.minPrice}
-                  max={PRICE_RANGE.max}
-                  value={filter.maxPrice}
-                  onChange={handleSliderChange}
-                  className="w-full"
-                />
-              </div>
-              <div className="flex justify-between text-sm mt-2">
-                <span>Min: {filter.minPrice}</span>
-                <span>Max: {filter.maxPrice}</span>
-              </div>
-            </div>
-            <hr className="mt-4 border-slate-500" />
-            <div>
-              <label className="block text-md font-bold text-gray-700 p-2">Sellers</label>
-              <div className="flex flex-col p-2">
-                {sellers.map(seller => (
-                  <label key={seller} className="inline-flex items-center pr-2">
-                    <input
-                      type="checkbox"
-                      checked={filter.selectedSellers.includes(seller)}
-                      onChange={() => handleSellerSelection(seller)}
-                      className="form-checkbox "
-                    />
-                    <span className="ml-2 font-light">{seller}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-            <hr className="border-slate-500" />
-            <div>
-              <label className="block text-md font-bold text-gray-700 p-2">Categories</label>
-              <div className="flex flex-col p-2">
-                {categories.map(category => (
-                  <label key={category} className="inline-flex items-center pr-2">
-                    <input
-                      type="checkbox"
-                      checked={filter.selectedCategories.includes(category)}
-                      onChange={() => handleCategorySelection(category)}
-                      className="form-checkbox"
-                    />
-                    <span className="ml-2 font-light">{category}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-            <hr className="border-slate-500" />
-            <div>
-              <label className="inline-flex items-center mt-2">
-                <input
-                  type="checkbox"
-                  checked={filter.hideOutOfStock}
-                  onChange={(e) => setFilter({ ...filter, hideOutOfStock: e.target.checked })}
-                  className="form-checkbox"
-                />
-                <span className="ml-2 font-bold text-gray-700 font-quicksand">Hide Out of Stock</span>
-              </label>
-            </div>
-            <div className="flex justify-center items-center">
-              <button onClick={applyFilter} className="bg-secondaryLightColor hover:bg-secondaryDarkColor text-black px-4 py-2 mt-4 rounded-md w-full flex items-center justify-center space-x-2">
-                <FcFilledFilter  size={25} />
-                <span>Filter</span>
-              </button>
-            </div>
-            <div className="flex justify-center items-center">
-              <button onClick={clearFilter} className=" bg-primaryLightColor hover:bg-primaryDarkColor text-white px-4 py-2 mt-2 mb-8 rounded-md w-full flex items-center justify-center space-x-2">
-                <FcClearFilters size={25} />
-                <span>Clear Filter</span>
-              </button>
-            </div>
-          </div>
-        </ScrollArea>
-
-      </div >
 
       {/* Content Section */}
       <div className="w-full md:w-4/4 ml-4 px-4 mt-20 md:mt-16" >
@@ -404,45 +234,16 @@ const ProductList = () => {
               </div>
               <div className={`grid gap-10 px-4 pb-8 mt-4 md:m-0  ${viewMode === 'grid' ? 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'}`}>
                 {paginatedProducts.map((product, productIndex) => (
-                  <div
+                  <ProductCard
                     key={product.id}
-                    className={`max-h-[320px] border bg-white bg-opacity-80 rounded-md shadow-md overflow-hidden ${viewMode === 'grid' ? 'w-full max-w-xs' : 'w-full max-w-lg'} hover:border hover:shadow-gray-500 hover:shadow-lg`}
-                    onMouseMove={(e) => handleMouseMove(e, productIndex)}
-                    onMouseLeave={handleMouseLeave}
-                  >
-                    <div className="relative w-full h-40">
-                      {product.productImageUrls?.length > 0 && (
-                        <div className="relative p-4 w-full h-full">
-                          <img
-                            src={product.productImageUrls[hoveredIndex === productIndex ? currentImageIndexes[productIndex] ?? 0 : 0]}
-                            alt={product.productName}
-                            className="object-contain w-full h-full"
-                          />
-                        </div>
-                      )}
-                    </div>
-                    <div className="p-2 flex flex-col justify-between h-40">
-                      <div className="text-gray-700 font-semibold text-sm truncate">{product.productName}</div>
-                      {product.discountedPrice ? (
-                        <div className="flex items-center space-x-1 pt-1">
-                          <p className="text-xs text-gray-500 line-through">${product.price}</p>
-                          <p className="text-red-600 font-medium text-sm">${product.discountedPrice}</p>
-                        </div>
-                      ) : (
-                        <p className="text-red-600 font-medium text-sm pt-1">${product.price}</p>
-                      )}
-                      <div className="text-gray-500 text-xs pt-1 truncate">Sold by: {product.sellerInfo}</div>
-                      <div className={`text-xs ${product.stockCount > 0 ? 'text-green-600' : 'text-red-600'} pt-1`}>
-                        {product.stockCount > 0 ? `In Stock (${product.stockCount})` : 'Out of Stock'}
-                      </div>
-                      <button
-                        onClick={() => (window.location.href = `/product-detail/${product.id}`)}
-                        className="btn bg-transparent border border-primaryDarkColor hover:bg-primaryDarkColor hover:text-white text-black hover:border-none justify-center py-1 mt-2 rounded-md mx-4 text-xs"
-                      >
-                        Details
-                      </button>
-                    </div>
-                  </div>
+                    product={product}
+                    productIndex={productIndex}
+                    currentImageIndexes={currentImageIndexes}
+                    hoveredIndex={hoveredIndex}
+                    handleMouseMove={handleMouseMove}
+                    handleMouseLeave={handleMouseLeave}
+                    viewMode={viewMode}
+                  />
                 ))}
               </div>
             </div>
