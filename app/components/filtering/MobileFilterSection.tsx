@@ -52,7 +52,7 @@ const MobileFilterSection: React.FC<MobileFilterSectionProps> = ({
         {isModalOpen && (
         <div className="fixed inset-0 bg-white border rounded-md shadow-lg z-50 overflow-auto p-4">
           <div className="relative p-4 w-auto mx-auto h-screen ">
-            <button onClick={handleCloseModal} className="btn absolute top-2 right-2 text-2xl  bg-transparent text-primaryDarkColor transition-transform duration-500 ease-in-out">
+            <button onClick={handleCloseModal} className="btn absolute top-2 right-2 text-2xl  bg-transparent text-primaryDarkColor hover:transition-transform hover:duration-500 hover:ease-in-out">
               ✕
             </button>
 

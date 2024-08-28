@@ -1,4 +1,3 @@
-import { Component } from "lucide-react"
 import type { Config } from "tailwindcss"
 
 const config = {
@@ -27,7 +26,7 @@ const config = {
         customBackground: '#f4f4ed',
         primaryDarkColor:'#465C7F',
         primaryLightColor:'#6B8EC6',
-        secondaryLightColor :'#E5C5AF',
+        secondaryLightColor :'#D4B19C',
         secondaryDarkColor : '#DBA291',
         lightColor :'#F8F7FF',
         border: "hsl(var(--border))",

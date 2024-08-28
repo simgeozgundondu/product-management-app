@@ -174,7 +174,7 @@ const ProductList = () => {
       <div className="absolute mt-20 py-3 left-4 z-10 md:hidden">
         <button
           onClick={handleOpenModal}
-          className="btn flex justify-start ml-10 bg-slate-400 hover:bg-primaryDarkColor text-white px-2 py-2 rounded-md items-center space-x-2 transition-transform duration-500 ease-in-out"
+          className="btn flex justify-start ml-10 bg-slate-400 hover:bg-primaryDarkColor text-white px-2 py-2 rounded-md items-center space-x-2 hover:transition-transform hover:duration-500"
         >
           <FcFilledFilter size={25} />
           <span>Filter</span>

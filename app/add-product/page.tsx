@@ -1,84 +1,83 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { AiOutlineClose } from "react-icons/ai";
 import IMask from "imask";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Product } from "../interfaces/product";
+import { useForm } from "react-hook-form";
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
-
-interface FormErrors {
-  productName?: string;
-  sellerInfo?: string;
-  stockCount?: string;
-  price?: string;
-  discountedPrice?: string;
-  category?: string;
+type FormInputs = {
+  productName: string;
+  sellerInfo: string;
+  stockCount: number;
+  price: number;
+  discountedPrice?: number;
+  category: string;
+  imageUrl: string;
 }
 
 const AddProduct = () => {
-  const stockCountRef = useRef<HTMLInputElement | null>(null);
-  const priceRef = useRef<HTMLInputElement | null>(null);
-  const discountedPriceRef = useRef<HTMLInputElement | null>(null);
+  const { register, handleSubmit, setValue, watch, formState: { errors }, reset } = useForm<FormInputs>({
+    defaultValues: {
+      productName: "",
+      sellerInfo: "",
+      stockCount: undefined,
+      price: undefined,
+      discountedPrice: undefined,
+      category: "",
+      imageUrl: "",
+    },
+  });
 
-  const [productName, setProductName] = useState<string>("");
-  const [sellerInfo, setSellerInfo] = useState<string>("");
-  const [stockCount, setStockCount] = useState<number | undefined>(undefined);
-  const [price, setPrice] = useState<number | undefined>(undefined);
-  const [discountedPrice, setDiscountedPrice] = useState<number | undefined>(undefined);
-  const [category, setCategory] = useState<string>("");
   const [productImageUrls, setProductImageUrls] = useState<string[]>([]);
-  const [imageUrl, setImageUrl] = useState<string>("");
-  const [formErrors, setFormErrors] = useState<FormErrors>({});
 
-  const [alertMessage, setAlertMessage] = useState<string | null>(null); 
-  const [alertType, setAlertType] = useState<"success" | "error" | "info" | "warning">("info"); 
+  const applyInputMasks = () => {
+    const stockCount = document.getElementById('stockCount') as HTMLInputElement;
+    const price = document.getElementById('price') as HTMLInputElement;
+    const discountedPrice = document.getElementById('discountedPrice') as HTMLInputElement;
+    const productName = document.getElementById('productName') as HTMLInputElement;
+    const sellerInfo = document.getElementById('sellerInfo') as HTMLInputElement;
+    const category = document.getElementById('category') as HTMLInputElement;
+
+    if (stockCount) {
+      IMask(stockCount, { mask: Number, signed: true, min: 0 });
+    }
+
+    if (price) {
+      IMask(price, { mask: Number, signed: true, min: 1 });
+    }
+
+    if (discountedPrice) {
+      IMask(discountedPrice, { mask: Number, signed: true, min: 1 });
+    }
+
+    if (productName) {
+      IMask(productName, { mask: /^[a-zA-Z]/ });
+    }
+
+    if (sellerInfo) {
+      IMask(sellerInfo, { mask: /^[a-zA-Z0-9.-]{1,}?$/ });
+    }
+
+    if (category) {
+      IMask(category, { mask: /^[a-zA-Z]{1,}?$/ });
+    }
+  };
 
   useEffect(() => {
-    if (stockCountRef.current) {
-      IMask(stockCountRef.current, {
-        mask: Number,
-        scale: 2,
-        signed: false,
-        thousandsSeparator: "",
-        padFractionalZeros: true,
-        normalizeZeros: true,
-        radix: ".",
-      });
-    }
-
-    if (priceRef.current) {
-      IMask(priceRef.current, {
-        mask: Number,
-        scale: 2,
-        signed: false,
-        thousandsSeparator: "",
-        padFractionalZeros: true,
-        normalizeZeros: true,
-        radix: ".",
-      });
-    }
-
-    if (discountedPriceRef.current) {
-      IMask(discountedPriceRef.current, {
-        mask: Number,
-        scale: 2,
-        signed: false,
-        thousandsSeparator: "",
-        padFractionalZeros: true,
-        normalizeZeros: true,
-        radix: ".",
-      });
-    }
+    applyInputMasks();
   }, []);
 
   const handleAddImageUrl = () => {
     const maxImages = 3;
+    const imageUrl = watch("imageUrl");
     if (!imageUrl) return;
     const currentImageCount = productImageUrls.length;
 
     if (currentImageCount >= maxImages) {
-      setAlertMessage("You can only add up to 3 images.");
-      setAlertType("error");
+      toast.error("You can only add up to 3 images.");
       return;
     }
     const img = new Image();
@@ -86,75 +85,61 @@ const AddProduct = () => {
 
     img.onload = () => {
       setProductImageUrls((prevUrls) => [...prevUrls, imageUrl]);
-      setImageUrl("");
+      setValue("imageUrl", "");
+      toast.success("Image added successfully!");
     };
 
     img.onerror = () => {
-      setAlertMessage("The provided URL does not lead to a valid image.");
-      setAlertType("error");
+      toast.error("The provided URL does not lead to a valid image.");
     };
   };
-
-
 
   const handleRemoveImage = (index: number) => {
     setProductImageUrls((prevUrls) =>
       prevUrls.filter((_, i) => i !== index)
     );
+    toast.info("Image removed.");
   };
 
-  const validateForm = () => {
-    const errors: FormErrors = {};
-    if (!/^[a-zA-Z]/.test(productName)) {
-      errors.productName = "Product name must start with a letter.";
+  const onSubmit = (data: FormInputs) => {
+    const { productName, sellerInfo, stockCount, price, discountedPrice, category } = data;
+    if (discountedPrice && discountedPrice >= price) {
+      toast.error("The discounted price must be less than the non-discounted price.");
+      return;
     }
-    if (
-      !sellerInfo.match(/^[a-zA-Z0-9]/) ||
-      /[^a-zA-Z0-9.-]/.test(sellerInfo)
-    ) {
-      errors.sellerInfo =
-        "Seller info is invalid. Only letters, numbers, - and . are allowed.";
+    if (price <= 0) {
+      toast.error("Price must be a positive number and greater than zero.");
+      return;
     }
-    if (stockCount === undefined || stockCount < 0) {
-      errors.stockCount = "Stock count must be a positive number.";
+    if (stockCount < 0) {
+      toast.error("Stock count must be a positive number.");
+      return;
     }
-    if (price === undefined || price <= 0) {
-      errors.price = "Price must be a positive decimal number.";
-    }
-    if (discountedPrice === undefined || discountedPrice < 0) {
-      errors.discountedPrice =
-        "Discounted price must be a non-negative decimal number.";
-    }
-    if (!/^[a-zA-Z\s]+$/.test(category)) {
-      errors.category = "Category must contain only letters and spaces.";
-    }
-    setFormErrors(errors);
-    return Object.keys(errors).length === 0;
-  };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (validateForm()) {
-      const product = {
-        id: Date.now(),
-        productName,
-        sellerInfo,
-        stockCount,
-        price,
-        discountedPrice,
-        category,
-        productImageUrls,
-      };
+    const product: Product = {
+      id: Date.now(),
+      productName,
+      sellerInfo,
+      stockCount,
+      price,
+      discountedPrice,
+      category,
+      productImageUrls,
+    };
 
-      const existingProducts = JSON.parse(
-        localStorage.getItem("products") || "[]"
-      );
-      existingProducts.push(product);
-      localStorage.setItem("products", JSON.stringify(existingProducts));
-      setAlertMessage("Product added successfully!");
-      setAlertType("success");
-      window.location.reload();
-    }
+    const existingProducts = JSON.parse(localStorage.getItem("products") || "[]");
+    existingProducts.push(product);
+    localStorage.setItem("products", JSON.stringify(existingProducts));
+    toast.success("Product added successfully!");
+    reset({
+      productName: "",
+      sellerInfo: "",
+      stockCount: undefined,
+      price: undefined,
+      discountedPrice: undefined,
+      category: "",
+      imageUrl: "",
+    });
   };
 
   return (
@@ -162,182 +147,164 @@ const AddProduct = () => {
       className="min-h-screen flex items-center justify-center p-4 bg-cover bg-center"
       style={{ backgroundImage: "url(/background5.jpg)" }}
     >
-      {alertMessage && (
-        <Alert className={`fixed bottom-10 right-10 mt-4 w-fit z-50 text-white ${alertType === "success" ? "bg-green-100" : "bg-red-500"}`}>
-          <AlertTitle>{alertType === "success" ? "Success!" : "Error!"}</AlertTitle>
-          <AlertDescription>{alertMessage}</AlertDescription>
-        </Alert>
-      )}
+      <ToastContainer />
       <div className="w-full max-w-4xl my-32 bg-opacity-80 backdrop-blur-sm bg-slate-100 rounded-lg shadow-lg p-4 md:p-8">
         <h2 className="text-xl md:text-3xl font-semibold text-center text-gray-800 my-4">
           Add New Product
         </h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Left Column */}
             <div className="space-y-5">
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label htmlFor="productName" className="block text-sm font-medium text-gray-700">
                   Product Name:
                 </label>
                 <input
-                  type="text"
-                  value={productName}
-                  onChange={(e) => setProductName(e.target.value)}
+                  id="productName"
+                  tabIndex={1}
+                  {...register("productName", { required: "Product name is required" })}
                   className="block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
-                  required
                 />
-                {formErrors.productName && (
-                  <p className="text-red-500 text-sm">{formErrors.productName}</p>
+                {errors.productName && (
+                  <p className="text-red-500 text-sm">{errors.productName.message}</p>
                 )}
               </div>
-  
+
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label htmlFor="sellerInfo" className="block text-sm font-medium text-gray-700">
                   Seller Info:
                 </label>
                 <input
-                  type="text"
-                  value={sellerInfo}
-                  onChange={(e) => setSellerInfo(e.target.value)}
+                  id="sellerInfo"
+                  tabIndex={3}
+                  {...register("sellerInfo", { required: "Seller info is required" })}
                   className="block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
-                  required
                 />
-                {formErrors.sellerInfo && (
-                  <p className="text-red-500 text-sm">{formErrors.sellerInfo}</p>
+                {errors.sellerInfo && (
+                  <p className="text-red-500 text-sm">{errors.sellerInfo.message}</p>
                 )}
               </div>
-  
+
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label htmlFor="stockCount" className="block text-sm font-medium text-gray-700">
                   Stock Count:
                 </label>
                 <input
-                  ref={stockCountRef}
-                  type="text"
-                  value={stockCount === undefined ? "" : stockCount.toString()}
-                  onChange={(e) => setStockCount(Number(e.target.value))}
+                  id="stockCount"
+                  type="number"
+                  tabIndex={5}
+                  {...register("stockCount", { required: "Stock count is required" })}
                   className="block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
-                  required
                 />
-                {formErrors.stockCount && (
-                  <p className="text-red-500 text-sm">{formErrors.stockCount}</p>
+                {errors.stockCount && (
+                  <p className="text-red-500 text-sm">{errors.stockCount.message}</p>
                 )}
               </div>
             </div>
-  
-            {/* Right Column */}
             <div className="space-y-5">
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label htmlFor="price" className="block text-sm font-medium text-gray-700">
                   Price:
                 </label>
                 <input
-                  ref={priceRef}
-                  type="text"
-                  value={price === undefined ? "" : price.toFixed(2)}
-                  onChange={(e) => setPrice(parseFloat(e.target.value))}
+                  id="price"
+                  type="number"
+                  tabIndex={2}
+                  {...register("price", { required: "Price is required" })}
                   className="block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
-                  required
                 />
-                {formErrors.price && (
-                  <p className="text-red-500 text-sm">{formErrors.price}</p>
+                {errors.price && (
+                  <p className="text-red-500 text-sm">{errors.price.message}</p>
                 )}
               </div>
-  
+
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label htmlFor="discountedPrice" className="block text-sm font-medium text-gray-700">
                   Discounted Price:
                 </label>
                 <input
-                  ref={discountedPriceRef}
-                  type="text"
-                  value={
-                    discountedPrice === undefined ? "" : discountedPrice.toFixed(2)
-                  }
-                  onChange={(e) => setDiscountedPrice(parseFloat(e.target.value))}
+                  id="discountedPrice"
+                  type="number"
+                  tabIndex={4}
+                  {...register("discountedPrice")}
                   className="block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
                 />
-                {formErrors.discountedPrice && (
-                  <p className="text-red-500 text-sm">
-                    {formErrors.discountedPrice}
-                  </p>
+                {errors.discountedPrice && (
+                  <p className="text-red-500 text-sm">{errors.discountedPrice.message}</p>
                 )}
               </div>
-  
+
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label htmlFor="category" className="block text-sm font-medium text-gray-700">
                   Category:
                 </label>
                 <input
-                  type="text"
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
+                  id="category"
+                  tabIndex={6}
+                  {...register("category", { required: "Category is required" })}
                   className="block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
-                  required
                 />
-                {formErrors.category && (
-                  <p className="text-red-500 text-sm">{formErrors.category}</p>
+                {errors.category && (
+                  <p className="text-red-500 text-sm">{errors.category.message}</p>
                 )}
               </div>
+
             </div>
           </div>
-  
           <div className="mt-4 bg-transparent border border-gray-400 rounded-md p-4">
-            <label className="block text-sm font-medium pb-4 text-gray-700">
-              Product Image URL:
+            <label htmlFor="imageUrl" className="block text-sm font-medium pb-4 text-gray-700">
+              Image URL:
             </label>
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
               <input
-                type="url"
-                value={imageUrl}
-                onChange={(e) => setImageUrl(e.target.value)}
-                className="block flex-grow border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2 mb-4"
+                id="imageUrl"
+                tabIndex={7}
+                {...register("imageUrl")}
+                className="block flex-grow border border-gray-300 rounded-md shadow-sm sm:text-sm p-2 mb-4"
               />
               <button
                 type="button"
                 onClick={handleAddImageUrl}
-                className="btn bg-primaryLightColor text-white px-3 rounded-md hover:bg-primaryDarkColor mb-4"
+                tabIndex={8}
+                className="btn px-4 py-2 sm:mb-4 bg-primaryLightColor text-white rounded-md hover:bg-primaryDarkColor"
               >
                 Add Image
               </button>
             </div>
+
             {productImageUrls.length > 0 && (
-              <div className="mt-3 flex flex-wrap gap-2">
-                {productImageUrls.map((url, index) => (
-                  <div
-                    key={index}
-                    className="relative w-24 flex items-center gap-2 p-2 rounded-md"
-                  >
-                    <img
-                      src={url}
-                      alt={`Product Image ${index + 1}`}
-                      className="w-20 h-20 object-cover rounded-md"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveImage(index)}
-                      className="absolute top-0 right-0 p-1 bg-red-500 text-white rounded-full hover:bg-red-700"
-                    >
-                      <AiOutlineClose size={16} />
-                    </button>
-                  </div>
-                ))}
+              <div className="mt-4">
+                <h3 className="text-lg font-semibold text-gray-800 mb-2">Images:</h3>
+                <div className="flex space-x-4">
+                  {productImageUrls.map((url, index) => (
+                    <div key={index} className="relative">
+                      <img src={url} alt={`Product Image ${index + 1}`} className="w-32 h-32 object-cover rounded-md" />
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveImage(index)}
+                        className="btn absolute top-0 right-0 p-1 bg-red-500 text-white rounded-full"
+                      >
+                        <AiOutlineClose />
+                      </button>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </div>
-  
-          <button
-            type="submit"
-            className="bg-secondaryLightColor text-white py-2 rounded-md hover:bg-secondaryDarkColor w-full mt-4 hover:scale-105"
-          >
-            Add Product
-          </button>
+          <div className="flex justify-center mt-6">
+            <button
+              type="submit"
+              tabIndex={9}
+              className="btn w-full px-6 py-2 bg-secondaryLightColor text-white rounded-md hover:bg-secondaryDarkColor hover:transition-transform hover:duration-300 transform hover:scale-105"
+            >
+              Add Product
+            </button>
+          </div>
         </form>
       </div>
     </div>
   );
-  
 };
 
 export default AddProduct;
