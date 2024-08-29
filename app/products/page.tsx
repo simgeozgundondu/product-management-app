@@ -166,6 +166,68 @@ const ProductList = () => {
     setHoveredIndex(null);
   };
 
+  const renderPaginationItems = () => {
+    const pages = [];
+  
+    // show first page 
+    pages.push(
+      <PaginationItem key={1}>
+        <PaginationLink
+          href="#"
+          isActive={currentPage === 1}
+          onClick={() => handlePageChange(1)}
+        >
+          1
+        </PaginationLink>
+      </PaginationItem>
+    );
+  
+    // use ellipsis between first page and last page
+    if (totalPages > 2) {
+      let start = Math.max(2, currentPage - 1);
+      let end = Math.min(totalPages - 1, currentPage + 1);
+  
+      if (start > 2) {
+        pages.push(<PaginationEllipsis key="start-ellipsis" />);
+      }
+  
+      for (let i = start; i <= end; i++) {
+        pages.push(
+          <PaginationItem key={i}>
+            <PaginationLink
+              href="#"
+              isActive={currentPage === i}
+              onClick={() => handlePageChange(i)}
+            >
+              {i}
+            </PaginationLink>
+          </PaginationItem>
+        );
+      }
+  
+      if (end < totalPages - 1) {
+        pages.push(<PaginationEllipsis key="end-ellipsis" />);
+      }
+    }
+  
+    // show last page
+    if (totalPages > 1) {
+      pages.push(
+        <PaginationItem key={totalPages}>
+          <PaginationLink
+            href="#"
+            isActive={currentPage === totalPages}
+            onClick={() => handlePageChange(totalPages)}
+          >
+            {totalPages}
+          </PaginationLink>
+        </PaginationItem>
+      );
+    }
+  
+    return pages;
+  };
+
 
   return (
     <div className="min-h-screen p-4 flex">
@@ -258,17 +320,7 @@ const ProductList = () => {
                       )}
                     </PaginationItem>
 
-                    {Array.from({ length: totalPages }, (_, index) => (
-                      <PaginationItem key={index + 1}>
-                        <PaginationLink
-                          href="#"
-                          isActive={currentPage === index + 1}
-                          onClick={() => handlePageChange(index + 1)}
-                        >
-                          {index + 1}
-                        </PaginationLink>
-                      </PaginationItem>
-                    ))}
+                    {renderPaginationItems()}
 
                     <PaginationItem>
                       {currentPage < totalPages && (
