@@ -1,12 +1,10 @@
 "use client";
 
 import { Product } from '@/app/interfaces/product';
-import { Dialog, DialogClose, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogClose, DialogContent } from '@/components/ui/dialog';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
-
-
 
 const ProductDetail = () => {
   const params = useParams();
@@ -153,10 +151,8 @@ const ProductDetail = () => {
         </div>
       </div>
 
-      {/* Dialog for Full Image */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="max-w-[60rem] max-h-auto p-8">
-          {/* <DialogTitle className="text-lg text-center font-bold">{product.productName}</DialogTitle> */}
           <button onClick={closeDialog} className="absolute top-4 right-4">
             <DialogClose className="text-2xl"></DialogClose>
           </button>

@@ -11,9 +11,9 @@ import 'react-toastify/dist/ReactToastify.css';
 type FormInputs = {
   productName: string;
   sellerInfo: string;
-  stockCount: number;
-  price: number;
-  discountedPrice?: number;
+  stockCount: number | null;
+  price: number | null;
+  discountedPrice?: number | null;
   category: string;
   imageUrl: string;
 }
@@ -23,9 +23,9 @@ const AddProduct = () => {
     defaultValues: {
       productName: "",
       sellerInfo: "",
-      stockCount: undefined,
-      price: undefined,
-      discountedPrice: undefined,
+      stockCount: null,
+      price: null,
+      discountedPrice: null,
       category: "",
       imageUrl: "",
     },
@@ -103,15 +103,19 @@ const AddProduct = () => {
 
   const onSubmit = (data: FormInputs) => {
     const { productName, sellerInfo, stockCount, price, discountedPrice, category } = data;
-    if (discountedPrice && discountedPrice >= price) {
+    const priceNum = parseFloat(price as unknown as string);
+    const discountedPriceNum = discountedPrice ? parseFloat(discountedPrice as unknown as string) : undefined;
+    const stockCountNum = parseInt(stockCount as unknown as string, 10);
+  
+    if (discountedPriceNum && discountedPriceNum >= priceNum) {
       toast.error("The discounted price must be less than the non-discounted price.");
       return;
     }
-    if (price <= 0) {
+    if (priceNum <= 0) {
       toast.error("Price must be a positive number and greater than zero.");
       return;
     }
-    if (stockCount < 0) {
+    if (stockCountNum < 0) {
       toast.error("Stock count must be a positive number.");
       return;
     }
@@ -134,9 +138,9 @@ const AddProduct = () => {
     reset({
       productName: "",
       sellerInfo: "",
-      stockCount: undefined,
-      price: undefined,
-      discountedPrice: undefined,
+      stockCount: null,
+      price: null,
+      discountedPrice: null,
       category: "",
       imageUrl: "",
     });
@@ -161,6 +165,7 @@ const AddProduct = () => {
                 </label>
                 <input
                   id="productName"
+                  value={watch("productName")}
                   tabIndex={1}
                   {...register("productName", { required: "Product name is required" })}
                   className="block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
@@ -176,6 +181,7 @@ const AddProduct = () => {
                 </label>
                 <input
                   id="sellerInfo"
+                  value={watch("sellerInfo")}
                   tabIndex={3}
                   {...register("sellerInfo", { required: "Seller info is required" })}
                   className="block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
@@ -191,7 +197,8 @@ const AddProduct = () => {
                 </label>
                 <input
                   id="stockCount"
-                  type="number"
+                  value= {watch("stockCount")??undefined}
+                  type="text"
                   tabIndex={5}
                   {...register("stockCount", { required: "Stock count is required" })}
                   className="block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
@@ -208,7 +215,8 @@ const AddProduct = () => {
                 </label>
                 <input
                   id="price"
-                  type="number"
+                  value={watch("price")??undefined}
+                  type="text"
                   tabIndex={2}
                   {...register("price", { required: "Price is required" })}
                   className="block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
@@ -224,7 +232,8 @@ const AddProduct = () => {
                 </label>
                 <input
                   id="discountedPrice"
-                  type="number"
+                  value={watch("discountedPrice")??undefined}
+                  type="text"
                   tabIndex={4}
                   {...register("discountedPrice")}
                   className="block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"

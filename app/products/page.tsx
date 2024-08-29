@@ -9,8 +9,6 @@ import MobileFilterSection from "../components/filtering/MobileFilterSection";
 import FilterSection from "../components/filtering/FilterSection";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 
-
-
 const ITEMS_PER_PAGE = 12;
 const PRICE_RANGE = {
   min: 0,
