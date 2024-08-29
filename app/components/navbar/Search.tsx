@@ -82,7 +82,7 @@ const Search = () => {
         <div className="relative md:mx-16 flex-2 md:w-[48rem]">
             <input
                 type="text"
-                className="w-full px-4 py-2 border font-quicksand bg-gray-100 border-gray-300 rounded-lg text-gray-800 focus:outline-none focus:border-black"
+                className="w-full px-4 py-2 border bg-gray-100 border-gray-300 rounded-lg text-gray-800 focus:outline-none focus:border-black"
                 placeholder="Search for products..."
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
@@ -120,7 +120,7 @@ const Search = () => {
                             );
                         })
                     ) : (
-                        <li className="px-4 py-2 text-red-600 font-quicksand">No products found :(</li>
+                        <li className="px-4 py-2 text-red-600">No products found :(</li>
                     )}
                     </ScrollArea>
                     

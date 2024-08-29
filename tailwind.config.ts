@@ -19,8 +19,7 @@ const config = {
     },
     extend: {
       fontFamily: {
-        'reenie': ['"Reenie Beanie"', 'cursive'],
-        'quicksand' : ['"Quicksand", sans-serif']
+        'reenie': ['"Reenie Beanie"', 'cursive']
       },
       colors: {
         customBackground: '#f4f4ed',
