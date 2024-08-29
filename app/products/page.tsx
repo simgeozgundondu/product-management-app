@@ -7,6 +7,7 @@ import { Product } from "../interfaces/product";
 import ProductCard from "../components/ProductCard";
 import MobileFilterSection from "../components/filtering/MobileFilterSection";
 import FilterSection from "../components/filtering/FilterSection";
+import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 
 
 
@@ -126,10 +127,8 @@ const ProductList = () => {
     currentPage * ITEMS_PER_PAGE
   );
 
-  const handlePageChange = (newPage: number) => {
-    if (newPage > 0 && newPage <= totalPages) {
-      setCurrentPage(newPage);
-    }
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
   };
 
   const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -203,7 +202,7 @@ const ProductList = () => {
         handleCategorySelection={handleCategorySelection}
         applyFilter={applyFilter}
         clearFilter={clearFilter}
-        handleCloseSidebar ={handleCloseSidebar}
+        handleCloseSidebar={handleCloseSidebar}
         setFilter={setFilter}
       />
 
@@ -251,34 +250,34 @@ const ProductList = () => {
 
 
               <div className="flex justify-center items-center space-x-2 mt-4">
-                <button
-                  onClick={() => handlePageChange(currentPage - 1)}
-                  disabled={currentPage === 1}
-                  className={`btn px-4 py-2 bg-gray-400 rounded-md ${currentPage === 1 ? 'cursor-not-allowed opacity-50' : ''}`}
-                >
-                  Previous
-                </button>
+                <Pagination>
+                  <PaginationContent>
+                    <PaginationItem>
+                      {currentPage > 1 && (
+                        <PaginationPrevious href="#" onClick={() => handlePageChange(currentPage - 1)} />
+                      )}
+                    </PaginationItem>
 
-                <div className="flex items-center">
-                  {Array.from({ length: totalPages }, (_, index) => (
-                    <button
-                      key={index + 1}
-                      onClick={() => handlePageChange(index + 1)}
-                      className={`btn px-2 py-1 mx-1 rounded-full ${currentPage === index + 1 ? 'bg-primaryLightColor text-white' : 'bg-gray-200'
-                        }`}
-                    >
-                      {index + 1}
-                    </button>
-                  ))}
-                </div>
+                    {Array.from({ length: totalPages }, (_, index) => (
+                      <PaginationItem key={index + 1}>
+                        <PaginationLink
+                          href="#"
+                          isActive={currentPage === index + 1}
+                          onClick={() => handlePageChange(index + 1)}
+                        >
+                          {index + 1}
+                        </PaginationLink>
+                      </PaginationItem>
+                    ))}
 
-                <button
-                  onClick={() => handlePageChange(currentPage + 1)}
-                  disabled={currentPage === totalPages}
-                  className={`btn px-4 py-2 bg-gray-400 rounded-md ${currentPage === totalPages ? 'cursor-not-allowed opacity-50' : ''}`}
-                >
-                  Next
-                </button>
+                    <PaginationItem>
+                      {currentPage < totalPages && (
+                        <PaginationNext href="#" onClick={() => handlePageChange(currentPage + 1)} />
+                      )}
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
+
               </div>
             </>
           )
