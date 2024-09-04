@@ -16,7 +16,7 @@ const HomePage: React.FC = () => {
   return (
     <div 
       className="flex flex-col md:flex-row justify-around items-center min-h-screen px-8 md:px-20 bg-cover bg-center"
-      style={{ backgroundImage: 'url(/background5.jpg)' }} 
+      style={{ backgroundImage: 'url(/background.jpg)' }} 
     >
       <div className=" flex flex-col justify-start items-center max-w-lg space-y-4 mb-8 md:mb-0 mt-[4rem] pl-12 bg-slate-100 bg-opacity-90 p-8 rounded-lg">
         <h1 className="text-4xl md:text-5xl text-primaryDarkColor">SHOPPING</h1>

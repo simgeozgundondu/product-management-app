@@ -95,6 +95,7 @@ const ProductList = () => {
   const applyFilter = () => {
     const filtered = products.filter((product) => {
       const price = product.discountedPrice || product.price;
+      if (price === null || price === undefined) return false;
       if (price < filter.minPrice || price > filter.maxPrice) return false;
       if (filter.hideOutOfStock && product.stockCount === 0) return false;
       if (filter.selectedSellers.length > 0 && !filter.selectedSellers.includes(product.sellerInfo)) return false;

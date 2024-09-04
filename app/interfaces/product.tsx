@@ -1,4 +1,3 @@
-
 export interface Product {
     id: number;
     productName: string;
@@ -9,4 +8,3 @@ export interface Product {
     category: string;
     productImageUrls: string[];
   }
-  

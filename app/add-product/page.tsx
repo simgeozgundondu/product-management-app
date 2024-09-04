@@ -120,6 +120,18 @@ const AddProduct = () => {
       return;
     }
 
+    // if (productName) {
+    //   IMask(productName, { mask: /^[a-zA-Z]/});
+    // }
+
+    // if (sellerInfo) {
+    //   IMask(sellerInfo, { mask: /^[a-zA-Z0-9.-]([a-zA-Z0-9.-\s]){1,}?$/ });
+    // }
+
+    // if (category) {
+    //   IMask(category, { mask: /^[a-zA-Z]([a-zA-Z\s]){1,}?$/ });
+    // }
+
     const product: Product = {
       id: Date.now(),
       productName,
@@ -149,7 +161,7 @@ const AddProduct = () => {
   return (
     <div
       className="min-h-screen flex items-center justify-center p-4 bg-cover bg-center"
-      style={{ backgroundImage: "url(/background5.jpg)" }}
+      style={{ backgroundImage: "url(/background.jpg)" }}
     >
       <ToastContainer />
       <div className="w-full max-w-4xl my-32 bg-opacity-80 backdrop-blur-sm bg-slate-100 rounded-lg shadow-lg p-4 md:p-8">

@@ -120,12 +120,12 @@ const ProductDetail = () => {
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque unde impedit eaque ut fugit mollitia doloribus excepturi ad sint! Consectetur.
               </p>
             </div>
-            <p className={`text-sm pt-2 ${product.stockCount > 0 ? 'text-green-600' : 'text-red-600'}`}>
-              {product.stockCount > 0 ? `In Stock (${product.stockCount})` : 'Out of Stock'}
+            <p className={`text-sm pt-2 ${product.stockCount && product.stockCount > 0 ? 'text-green-600' : 'text-red-600'}`}>
+              {product.stockCount && product.stockCount > 0 ? `In Stock (${product.stockCount})` : 'Out of Stock'}
             </p>
 
             <div className="mt-4 space-y-2">
-              {product.stockCount > 0 ? (
+              {product.stockCount && product.stockCount > 0 ? (
                 <div className="flex flex-col sm:flex-row sm:space-x-4">
                   <button
                     className="btn px-6 py-2 rounded-md w-full bg-primaryLightColor hover:bg-primaryDarkColor text-white"

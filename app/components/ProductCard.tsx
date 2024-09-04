@@ -48,8 +48,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <p className="text-red-600 font-medium text-sm pt-1">${product.price}</p>
         )}
         <div className="text-gray-500 text-xs pt-1 truncate">Sold by: {product.sellerInfo}</div>
-        <div className={`text-xs ${product.stockCount > 0 ? 'text-green-600' : 'text-red-600'} pt-1`}>
-          {product.stockCount > 0 ? `In Stock (${product.stockCount})` : 'Out of Stock'}
+        <div className={`text-xs ${product.stockCount && product.stockCount > 0 ? 'text-green-600' : 'text-red-600'} pt-1`}>
+          {product.stockCount && product.stockCount > 0 ? `In Stock (${product.stockCount})` : 'Out of Stock'}
         </div>
         <button
           onClick={() => (window.location.href = `/product-detail/${product.id}`)}

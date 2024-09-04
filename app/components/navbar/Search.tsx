@@ -18,7 +18,7 @@ const Search = () => {
     const [activeIndex, setActiveIndex] = useState<number>(-1);
     const [hoveredIndex, setHoveredIndex] = useState<number>(-1);
     const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
-    const router = useRouter();
+    const router = useRouter();  
     const dropdownRef = useRef<HTMLUListElement>(null);
 
     useEffect(() => {
