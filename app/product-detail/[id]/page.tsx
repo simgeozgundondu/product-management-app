@@ -69,7 +69,7 @@ const ProductDetail = () => {
             <img
               src={product.productImageUrls[currentImageIndex]}
               alt={product.productName}
-              className="rounded-xl mb-4 object-contain w-full h-64 md:h-96 cursor-pointer border shadow-md"
+              className="rounded-xl mb-4 object-contain w-full h-64 md:h-96 cursor-pointer"
               onClick={openDialog}
             />
             {product.productImageUrls.length > 1 && (

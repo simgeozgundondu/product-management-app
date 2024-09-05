@@ -273,7 +273,7 @@ const ProductList = () => {
 
         {
           paginatedProducts.length === 0 ? (
-            <div className="rounded-md bg-slate-200 bg-opacity-50 flex justify-center items-center text-center text-lg font-bold text-gray-700">
+            <div className="rounded-md mt-16 bg-slate-200 bg-opacity-50 flex justify-center items-center text-center text-lg font-bold text-gray-700">
               No products available :(
             </div>
           ) : (

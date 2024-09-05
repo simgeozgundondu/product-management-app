@@ -19,7 +19,7 @@ type FormInputs = {
 }
 
 const AddProduct = () => {
-  const { register, handleSubmit, setValue, watch, formState: { errors }, reset } = useForm<FormInputs>({
+  const { register, handleSubmit, setValue, watch, formState: { errors }, reset, setError } = useForm<FormInputs>({
     defaultValues: {
       productName: "",
       sellerInfo: "",
@@ -41,29 +41,15 @@ const AddProduct = () => {
     const sellerInfo = document.getElementById('sellerInfo') as HTMLInputElement;
     const category = document.getElementById('category') as HTMLInputElement;
 
-    if (stockCount) {
-      IMask(stockCount, { mask: Number, signed: true, min: 0 });
-    }
-
-    if (price) {
-      IMask(price, { mask: Number, signed: true, min: 1 });
-    }
-
-    if (discountedPrice) {
-      IMask(discountedPrice, { mask: Number, signed: true, min: 1 });
-    }
-
-    if (productName) {
-      IMask(productName, { mask: /^[a-zA-Z]/ });
-    }
-
-    if (sellerInfo) {
-      IMask(sellerInfo, { mask: /^[a-zA-Z0-9.-]{1,}?$/ });
-    }
-
-    if (category) {
-      IMask(category, { mask: /^[a-zA-Z]{1,}?$/ });
-    }
+    IMask(stockCount, { mask: Number, signed: true, min: 0 });
+    IMask(price, { mask: Number, signed: true, min: 1 });
+    IMask(discountedPrice, { mask: Number, signed: true, min: 1 });
+    IMask(productName, { mask: /^[a-zA-Z]/ });
+    IMask(sellerInfo, { mask: /^[a-zA-Z0-9.\- ]+$/ });
+    IMask(category, { mask: /^[a-zA-Z ]+$/ });
+    
+  // IMask(sellerInfo, { mask: /^[a-zA-Z0-9.-]([a-zA-Z0-9.-\s]){1,}?$/ });
+  // IMask(category, { mask: /^[a-zA-Z]([a-zA-Z\s]){1,}?$/ });
   };
 
   useEffect(() => {
@@ -106,31 +92,34 @@ const AddProduct = () => {
     const priceNum = parseFloat(price as unknown as string);
     const discountedPriceNum = discountedPrice ? parseFloat(discountedPrice as unknown as string) : undefined;
     const stockCountNum = parseInt(stockCount as unknown as string, 10);
+
+    let hasError=false;
   
     if (discountedPriceNum && discountedPriceNum >= priceNum) {
-      toast.error("The discounted price must be less than the non-discounted price.");
-      return;
+      setError("discountedPrice", {
+        type: "manual",
+        message: "Discounted price must be lower than the regular price.",
+      });
+      hasError = true;
     }
     if (priceNum <= 0) {
-      toast.error("Price must be a positive number and greater than zero.");
-      return;
+      setError("price", {
+        type: "manual",
+        message: "Price must be a positive number and greater than zero.",
+      });
+      hasError = true;
     }
     if (stockCountNum < 0) {
-      toast.error("Stock count must be a positive number.");
+      setError("stockCount", {
+        type: "manual",
+        message: "Stock count must be a positive number.",
+      });
+      hasError = true;
+    }
+    if (hasError) {
       return;
     }
 
-    // if (productName) {
-    //   IMask(productName, { mask: /^[a-zA-Z]/});
-    // }
-
-    // if (sellerInfo) {
-    //   IMask(sellerInfo, { mask: /^[a-zA-Z0-9.-]([a-zA-Z0-9.-\s]){1,}?$/ });
-    // }
-
-    // if (category) {
-    //   IMask(category, { mask: /^[a-zA-Z]([a-zA-Z\s]){1,}?$/ });
-    // }
 
     const product: Product = {
       id: Date.now(),
@@ -164,14 +153,14 @@ const AddProduct = () => {
       style={{ backgroundImage: "url(/background.jpg)" }}
     >
       <ToastContainer />
-      <div className="w-full max-w-4xl my-32 bg-opacity-80 backdrop-blur-sm bg-slate-100 rounded-lg shadow-lg p-4 md:p-8">
+      <div className="w-full max-w-4xl my-28 bg-opacity-80 backdrop-blur-sm bg-slate-100 rounded-lg shadow-lg p-4 md:p-8">
         <h2 className="text-xl md:text-3xl font-semibold text-center text-gray-800 my-4">
           Add New Product
         </h2>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-5">
-              <div>
+            <div className="space-y-7">
+              <div className="relative">
                 <label htmlFor="productName" className="block text-sm font-medium text-gray-700">
                   Product Name:
                 </label>
@@ -183,11 +172,11 @@ const AddProduct = () => {
                   className="block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
                 />
                 {errors.productName && (
-                  <p className="text-red-500 text-sm">{errors.productName.message}</p>
+                  <p className="absolute left-0 top-15 text-red-500 text-sm">{errors.productName.message}</p>
                 )}
               </div>
 
-              <div>
+              <div className="relative">
                 <label htmlFor="sellerInfo" className="block text-sm font-medium text-gray-700">
                   Seller Info:
                 </label>
@@ -199,11 +188,11 @@ const AddProduct = () => {
                   className="block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
                 />
                 {errors.sellerInfo && (
-                  <p className="text-red-500 text-sm">{errors.sellerInfo.message}</p>
+                  <p className="absolute left-0 top-15 text-red-500 text-sm">{errors.sellerInfo.message}</p>
                 )}
               </div>
 
-              <div>
+              <div className="relative">
                 <label htmlFor="stockCount" className="block text-sm font-medium text-gray-700">
                   Stock Count:
                 </label>
@@ -216,12 +205,12 @@ const AddProduct = () => {
                   className="block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
                 />
                 {errors.stockCount && (
-                  <p className="text-red-500 text-sm">{errors.stockCount.message}</p>
+                  <p className="absolute left-0 top-15 text-red-500 text-sm">{errors.stockCount.message}</p>
                 )}
               </div>
             </div>
-            <div className="space-y-5">
-              <div>
+            <div className="space-y-7">
+              <div className="relative">
                 <label htmlFor="price" className="block text-sm font-medium text-gray-700">
                   Price:
                 </label>
@@ -234,11 +223,11 @@ const AddProduct = () => {
                   className="block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
                 />
                 {errors.price && (
-                  <p className="text-red-500 text-sm">{errors.price.message}</p>
+                  <p className="absolute left-0 top-15 text-red-500 text-sm">{errors.price.message}</p>
                 )}
               </div>
 
-              <div>
+              <div className="relative">
                 <label htmlFor="discountedPrice" className="block text-sm font-medium text-gray-700">
                   Discounted Price:
                 </label>
@@ -251,11 +240,11 @@ const AddProduct = () => {
                   className="block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
                 />
                 {errors.discountedPrice && (
-                  <p className="text-red-500 text-sm">{errors.discountedPrice.message}</p>
+                  <p className="absolute left-0 top-15 text-red-500 text-sm">{errors.discountedPrice.message}</p>
                 )}
               </div>
 
-              <div>
+              <div className="relative">
                 <label htmlFor="category" className="block text-sm font-medium text-gray-700">
                   Category:
                 </label>
@@ -266,13 +255,13 @@ const AddProduct = () => {
                   className="block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
                 />
                 {errors.category && (
-                  <p className="text-red-500 text-sm">{errors.category.message}</p>
+                  <p className="absolute left-0 top-15 text-red-500 text-sm">{errors.category.message}</p>
                 )}
               </div>
 
             </div>
           </div>
-          <div className="mt-4 bg-transparent border border-gray-400 rounded-md p-4">
+          <div className="relative mt-6 bg-transparent border border-gray-400 rounded-md p-4">
             <label htmlFor="imageUrl" className="block text-sm font-medium pb-4 text-gray-700">
               Image URL:
             </label>
@@ -280,9 +269,12 @@ const AddProduct = () => {
               <input
                 id="imageUrl"
                 tabIndex={7}
-                {...register("imageUrl")}
+                {...register("imageUrl", { required: "Image URL is required" })}
                 className="block flex-grow border border-gray-300 rounded-md shadow-sm sm:text-sm p-2 mb-4"
               />
+              {errors.imageUrl && (
+                  <p className="absolute left-5 top-24 text-red-500 text-sm">{errors.imageUrl.message}</p>
+                )}
               <button
                 type="button"
                 onClick={handleAddImageUrl}
