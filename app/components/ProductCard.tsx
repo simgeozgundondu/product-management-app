@@ -19,6 +19,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
   handleMouseLeave,
   viewMode,
 }) => {
+  const discountPercentage = product.discountedPrice && product.price
+    ? Math.round(((product.price - product.discountedPrice) / product.price) * 100)
+    : null;
+
   return (
     <div
       key={product.id}
@@ -43,10 +47,17 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <div className="flex items-center space-x-1 pt-1">
             <p className="text-xs text-gray-500 line-through">${product.price}</p>
             <p className="text-red-600 font-medium text-sm">${product.discountedPrice}</p>
+
           </div>
         ) : (
           <p className="text-red-600 font-medium text-sm pt-1">${product.price}</p>
         )}
+        {discountPercentage && (
+          <p className={`m-1 p-1 max-w-fit text-white text-xs rounded-sm ${discountPercentage && discountPercentage <= 50 ? ' bg-orange-600 ' : 'bg-green-600'}`}>
+            -{discountPercentage}% Discount
+          </p>
+        )}
+
         <div className="text-gray-500 text-xs pt-1 truncate">Sold by: {product.sellerInfo}</div>
         <div className={`text-xs ${product.stockCount && product.stockCount > 0 ? 'text-green-600' : 'text-red-600'} pt-1`}>
           {product.stockCount && product.stockCount > 0 ? `In Stock (${product.stockCount})` : 'Out of Stock'}
